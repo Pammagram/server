@@ -158,11 +158,6 @@ const reactRules = {
   ],
 };
 
-const reactNativeRules = {
-  'react-native/no-inline-styles': 'warn', // All react-native styles must be move out to a styles object
-  'react-native/split-platform-components': 'error',
-  'react-native/no-single-element-style-arrays': 'error',
-};
 
 const paddingRules = {
   'padding-line-between-statements': [
@@ -348,6 +343,12 @@ const override = {
       '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
+  classMethods: {
+    rules: {
+      'class-methods-use-this': 'off'
+    },
+    files: ['**/*.ts'],
+  },
   namingConventionExceptions: {
     files: [
       'src/configs/*.ts',
@@ -381,21 +382,6 @@ const override = {
       'import/no-dynamic-require': 'off',
       'global-require': 'off',
       '@typescript-eslint/naming-convention': 'off',
-    },
-  },
-  restrictedExports: {
-    files: ['src/app/**/*.tsx'],
-    rules: {
-      'no-restricted-exports': 'off',
-    },
-  },
-  mjsFiles: {
-    files: ['*.mjs'],
-    rules: {
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/naming-convention': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      'no-useless-escape': 'off',
     },
   },
 };
