@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  private readonly dummyText = 'Hello World!';
-
+  // eslint-disable-next-line class-methods-use-this -- dummy method which will be removed soon.
   getHello(): string {
-    return this.dummyText;
+    return 'Hello World!';
   }
 }
