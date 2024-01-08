@@ -12,12 +12,12 @@ import { Input, Ip, Request, Response } from '../common/decorators';
 export type Session = {
   active: boolean;
   ip: string;
-  lastVisit: number;
+  lastVisitInMs: number;
   sessionId: string;
   userAgent: string;
 };
 
-const sessions: Session[] = [];
+export const sessions: Session[] = [];
 
 @Resolver()
 export class AuthResolver {
@@ -40,15 +40,17 @@ export class AuthResolver {
     // eslint-disable-next-line no-magic-numbers
     const sessionId = Math.random().toString(36);
 
-    const sessionData = {
+    const sessionData: Session = {
       active: true,
       ip,
-      lastVisit: new Date().getTime(),
+      lastVisitInMs: Date.now(),
       sessionId,
       userAgent: request.headers['user-agent'],
     };
 
     sessions.push(sessionData);
+
+    console.debug('sessions', sessions);
 
     // TODO to constants
     response.cookie('sessionId', sessionId, {

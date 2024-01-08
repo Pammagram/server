@@ -1,19 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-// eslint-disable @typescript-eslint/no-unsafe-assignment
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Args, GqlExecutionContext } from '@nestjs/graphql';
+import {
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from 'express';
 
-// TODO into separate files
+export type RequestAndResponse = {
+  req: ExpressRequest;
+  res: ExpressResponse;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- We don't know types beforehand
 export const Input = (...args) => Args('input', ...args);
 
 export const Cookies = createParamDecorator(
-  (data: string, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
+  (cookieName: string, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest<ExpressRequest>();
 
-    return data ? request.cookies?.[data] : request.cookies;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- We need to access property we don't know beforehand
+    const cookies = (request.cookies?.[cookieName] ?? request.cookies) as
+      | Record<string, string>
+      | string;
+
+    return cookies;
   },
 );
 
@@ -21,7 +30,7 @@ export const Response = createParamDecorator(
   (_data: unknown, context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
 
-    return ctx.getContext().res;
+    return ctx.getContext<RequestAndResponse>().res;
   },
 );
 
@@ -29,7 +38,7 @@ export const Request = createParamDecorator(
   (_data: unknown, context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
 
-    return ctx.getContext().req;
+    return ctx.getContext<RequestAndResponse>().req;
   },
 );
 
@@ -37,6 +46,6 @@ export const Ip = createParamDecorator(
   (_data: unknown, context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
 
-    return ctx.getContext().req.ip;
+    return ctx.getContext<RequestAndResponse>().req.ip;
   },
 );
