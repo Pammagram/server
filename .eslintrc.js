@@ -350,6 +350,14 @@ const override = {
       'no-magic-numbers': 'off',
     },
   },
+  env: {
+    files: ['env.d.ts', 'config/**.ts'],
+    rules: {
+      'no-magic-numbers': 'off',
+      'typescript-sort-keys/interface': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+    },
+  },
   assets: {
     files: ['**/*/assets/**/*.ts'],
     rules: {
