@@ -5,14 +5,19 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { RequestAndResponse } from 'src/modules/common/decorators';
+import { ConfigType } from 'config';
+import { Config, RequestAndResponse } from 'src/modules/common/decorators';
 
 import { sessions } from '../auth.resolver';
 
-const SESSION_TIMEOUT = 3000;
-
 @Injectable()
 export class AuthGuard implements CanActivate {
+  private readonly config: ConfigType['auth'];
+
+  constructor(@Config() configService: ConfigType) {
+    this.config = configService.auth;
+  }
+
   canActivate(context: ExecutionContext): boolean | Promise<boolean> {
     const request =
       GqlExecutionContext.create(context).getContext<RequestAndResponse>().req;
@@ -32,7 +37,10 @@ export class AuthGuard implements CanActivate {
     // * Last activity exceeds session timeout, require login again
     const currentTimeInMs = Date.now();
 
-    if (currentTimeInMs - session.lastVisitInMs > SESSION_TIMEOUT) {
+    if (
+      currentTimeInMs - session.lastVisitInMs >
+      this.config.sessionTimeoutInMs
+    ) {
       // TODO nest logger
       console.debug('Session expired');
 

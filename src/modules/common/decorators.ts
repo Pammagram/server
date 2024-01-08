@@ -1,5 +1,6 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext, Inject } from '@nestjs/common';
 import { Args, GqlExecutionContext } from '@nestjs/graphql';
+import { CONFIG_PROVIDER } from 'config';
 import {
   Request as ExpressRequest,
   Response as ExpressResponse,
@@ -49,3 +50,5 @@ export const Ip = createParamDecorator(
     return ctx.getContext<RequestAndResponse>().req.ip;
   },
 );
+
+export const Config = () => Inject(CONFIG_PROVIDER);

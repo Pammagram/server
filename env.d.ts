@@ -9,6 +9,9 @@ declare global {
 
       // Auth
       SESSION_TIMEOUT_IN_MS: number;
+
+      // Others
+      COOKIE_SECRET: string;
     }
   }
 }
