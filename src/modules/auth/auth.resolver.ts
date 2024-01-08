@@ -1,19 +1,66 @@
-/* eslint-disable class-methods-use-this -- fix in future */
 import { Mutation, Resolver } from '@nestjs/graphql';
+import {
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from 'express';
+
+import { AuthService } from './auth.service';
+import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
+
+import { Input, Ip, Request, Response } from '../common/decorators';
+
+export type Session = {
+  active: boolean;
+  ip: string;
+  lastVisit: number;
+  sessionId: string;
+  userAgent: string;
+};
+
+const sessions: Session[] = [];
 
 @Resolver()
 export class AuthResolver {
-  @Mutation()
+  constructor(private readonly authService: AuthService) {}
+
+  @Mutation(() => Boolean)
   sendSms(): true {
     return true;
   }
 
-  @Mutation()
-  verifySms(): true {
-    return true;
+  // ? TODO return user on successful login
+  @Mutation(() => VerifySmsOutput)
+  verifySms(
+    @Ip() ip: string,
+    @Response() response: ExpressResponse,
+    @Request() request: ExpressRequest,
+    @Input() input: VerifySmsInput,
+  ): VerifySmsOutput {
+    // const {} = input;
+    // eslint-disable-next-line no-magic-numbers
+    const sessionId = Math.random().toString(36);
+
+    const sessionData = {
+      active: true,
+      ip,
+      lastVisit: new Date().getTime(),
+      sessionId,
+      userAgent: request.headers['user-agent'],
+    };
+
+    sessions.push(sessionData);
+
+    // TODO to constants
+    response.cookie('sessionId', sessionId, {
+      httpOnly: true,
+      secure: true,
+      signed: true,
+    });
+
+    return this.authService.verifySms(input);
   }
 
-  @Mutation()
+  @Mutation(() => Boolean)
   resendSms(): true {
     return true;
   }

@@ -1,6 +1,4 @@
-const EXCLUDE_NAMES_NAMING_CONVENTION_WORDS = [
-  'reCaptcha',
-];
+const EXCLUDE_NAMES_NAMING_CONVENTION_WORDS = ['reCaptcha'];
 
 const EXCLUDE_NAMES_NAMING_CONVENTION_REGEXPS = [
   '.*URL.*',
@@ -137,27 +135,6 @@ const importRules = {
   'import/no-extraneous-dependencies': ['error'],
   ...importSortOrderRule,
 };
-
-const reactRules = {
-  'react/react-in-jsx-scope': 'off',
-  'react/jsx-uses-react': 'off',
-  'react/display-name': 'off',
-  'react/prop-types': 'off',
-  'react/no-array-index-key': 'off',
-  'react-hooks/exhaustive-deps': 'off',
-  'react/style-prop-object': 'off', // we allow to use string as prop
-  'react/require-default-props': 'off',
-  'react/jsx-props-no-spreading': 'off',
-  'react/no-unescaped-entities': 'off',
-  'react/function-component-definition': [
-    'error',
-    {
-      namedComponents: 'arrow-function',
-      unnamedComponents: 'arrow-function',
-    },
-  ],
-};
-
 
 const paddingRules = {
   'padding-line-between-statements': [
@@ -345,7 +322,7 @@ const override = {
   },
   classMethods: {
     rules: {
-      'class-methods-use-this': 'off'
+      'class-methods-use-this': 'off',
     },
     files: ['**/*.ts'],
   },
@@ -390,7 +367,6 @@ const override = {
  * @type {import('eslint').Linter.Config}
  */
 module.exports = {
-  parser: '@typescript-eslint/parser',
   extends: [
     'airbnb',
     'airbnb/hooks',
@@ -404,6 +380,7 @@ module.exports = {
     'plugin:eslint-comments/recommended',
     'plugin:@cspell/recommended',
   ],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: 'tsconfig.json',
@@ -433,8 +410,6 @@ module.exports = {
   rules: {
     ...initialRules,
     ...tsRules,
-    ...reactRules,
-    ...reactNativeRules,
     ...spellCheckerRule,
     ...importRules,
     ...paddingRules,
