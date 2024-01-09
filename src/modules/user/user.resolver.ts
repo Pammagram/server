@@ -1,8 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { CreateUserInput, CreateUserOutput } from './dto';
-import { UserDto } from './dto/user.dto';
+import { CreateUserInput, CreateUserOutput, UserOutput } from './dto';
 import { UserService } from './user.service';
 
 import { AuthGuard } from '../auth/guards/auth';
@@ -13,8 +12,8 @@ import { Input, SignedCookies } from '../common/decorators';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => UserDto)
-  me(@SignedCookies('sessionId') _sessionId: string): UserDto {
+  @Query(() => UserOutput)
+  me(@SignedCookies('sessionId') _sessionId: string): UserOutput {
     return {
       lastActiveInMs: new Date(),
       phoneNumber: '+38',
@@ -24,8 +23,8 @@ export class UserResolver {
   }
 
   // TODO add filtering
-  @Query(() => [UserDto])
-  async users(): Promise<UserDto[]> {
+  @Query(() => [UserOutput])
+  async users(): Promise<UserOutput[]> {
     return this.userService.findAll();
   }
 

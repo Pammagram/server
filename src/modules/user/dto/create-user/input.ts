@@ -1,10 +1,10 @@
 import { InputType, OmitType } from '@nestjs/graphql';
 
-import { UserDto } from '../user.dto';
+import { UserInput } from '../user';
 
 @InputType()
 export class CreateUserInput extends OmitType(
-  UserDto,
-  ['id', 'lastActiveInMs'],
+  UserInput,
+  ['id', 'lastActiveInMs', 'sessions'],
   InputType,
 ) {}
