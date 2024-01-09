@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { SessionEntity } from 'src/modules/auth/entities';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -16,5 +17,8 @@ export class User {
   })
   lastActiveInMs: Date;
 
-  // TODO add sessions foreign key
+  @OneToMany(() => SessionEntity, (session) => session.user, {
+    onDelete: 'CASCADE',
+  })
+  sessions: SessionEntity[];
 }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/modules/user/entities';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export type Session = {
   active: boolean;
@@ -27,4 +28,7 @@ export class SessionEntity implements Session {
 
   @Column('text')
   sessionId: string;
+
+  @ManyToOne(() => User, (user) => user.sessions)
+  user: User[];
 }

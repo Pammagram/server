@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
-import { SessionEntity } from './entities/session.entity';
+import { SessionEntity } from './entities';
 
 @Injectable()
 export class AuthService {

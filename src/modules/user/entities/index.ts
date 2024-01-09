@@ -9,3 +9,5 @@ export const userProviders = [
     useFactory: (dataSource: DataSource) => dataSource.getRepository(User),
   },
 ];
+
+export * from './user.entity';
