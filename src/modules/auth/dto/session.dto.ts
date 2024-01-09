@@ -1,10 +1,10 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { UserOutput } from 'src/modules/user/dto';
+import { UserDto } from 'src/modules/user/dto/user.dto';
 
-import { Session } from '../../entities/session.entity';
+import { Session } from '../entities';
 
 @ObjectType()
-export class SessionOutput implements Session {
+export class SessionDto implements Session {
   @Field(() => Boolean)
   active: boolean;
 
@@ -17,8 +17,8 @@ export class SessionOutput implements Session {
   @Field(() => String)
   sessionId: string;
 
-  @Field(() => [UserOutput])
-  user: UserOutput[];
+  @Field(() => [UserDto])
+  user: UserDto[];
 
   @Field(() => String)
   userAgent: string;

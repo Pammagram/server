@@ -2,7 +2,7 @@ import { SessionEntity } from 'src/modules/auth/entities';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,3 +22,5 @@ export class User {
   })
   sessions: SessionEntity[];
 }
+
+export type User = Omit<UserEntity, 'sessions'>;

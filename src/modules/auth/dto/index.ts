@@ -1,2 +1,2 @@
 export * from './verifySms';
-export * from './session';
+export * from './session.dto';

@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { UserOutput } from '../user';
+import { UserDto } from '../user.dto';
 
 @ObjectType()
 export class CreateUserOutput {
-  @Field(() => UserOutput)
-  data: UserOutput;
+  @Field(() => UserDto)
+  data: UserDto;
 }
