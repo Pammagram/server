@@ -8,25 +8,26 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { ConfigType } from 'src/config';
 import { Config, RequestAndResponse } from 'src/modules/common/decorators';
 
-import { sessions } from '../auth.resolver';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   private readonly config: ConfigType['auth'];
 
-  constructor(@Config() configService: ConfigType) {
+  constructor(
+    @Config() configService: ConfigType,
+    private readonly authService: AuthService,
+  ) {
     this.config = configService.auth;
   }
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request =
       GqlExecutionContext.create(context).getContext<RequestAndResponse>().req;
 
     const { sessionId } = request.signedCookies as Record<string, string>;
 
-    const session = sessions.find(
-      (existingSession) => existingSession.sessionId === sessionId,
-    );
+    const session = await this.authService.findSessionById(sessionId);
 
     if (!session) {
       console.debug('Session not found');
@@ -38,7 +39,7 @@ export class AuthGuard implements CanActivate {
     const currentTimeInMs = Date.now();
 
     if (
-      currentTimeInMs - session.lastVisitInMs >
+      currentTimeInMs - session.lastVisitInMs.getTime() >
       this.config.sessionTimeoutInMs
     ) {
       // TODO nest logger
@@ -47,7 +48,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    session.lastVisitInMs = currentTimeInMs;
+    await this.authService.updateSessionById(sessionId, {
+      lastVisitInMs: new Date(currentTimeInMs),
+    });
 
     return true;
   }

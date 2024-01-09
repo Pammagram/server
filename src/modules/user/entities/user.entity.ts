@@ -5,8 +5,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 500 })
-  username: string;
+  @Column({ length: 500, nullable: true })
+  username?: string;
+
+  // TODO first name last name
 
   @Column('text')
   phoneNumber: string;

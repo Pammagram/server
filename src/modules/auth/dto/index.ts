@@ -1,2 +1,2 @@
 export * from './verifySms';
-export * from './register';
+export * from './sendSms';

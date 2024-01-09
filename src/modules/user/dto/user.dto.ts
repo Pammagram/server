@@ -7,8 +7,8 @@ export class UserDto implements User {
   @Field(() => Int)
   id: number;
 
-  @Field(() => String)
-  username: string;
+  @Field(() => String, { nullable: true })
+  username?: string;
 
   @Field(() => String)
   phoneNumber: string;

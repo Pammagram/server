@@ -14,13 +14,8 @@ export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Query(() => UserDto)
-  me(@SignedCookies('sessionId') _sessionId: string): UserDto {
-    return {
-      lastActiveInMs: new Date(),
-      phoneNumber: '+38',
-      username: 'Max',
-      id: 0,
-    };
+  me(@SignedCookies('sessionId') sessionId: string): Promise<UserDto> {
+    return this.userService.findBySessionId(sessionId);
   }
 
   // TODO add filtering

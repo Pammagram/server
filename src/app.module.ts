@@ -19,11 +19,10 @@ import { UserModule } from './modules/user/user.module';
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     DbModule,
-    AuthModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppResolver],
-  exports: [],
 })
 export class AppModule {}
