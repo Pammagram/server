@@ -1,9 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { UserEntity } from '../entities/user.entity';
+import { User } from '../entities/user.entity';
 
 @ObjectType()
-export class UserDto implements Omit<UserEntity, 'id'> {
+export class UserDto implements User {
+  @Field(() => Int)
+  id: number;
+
   @Field(() => String)
   username: string;
 
@@ -11,5 +14,5 @@ export class UserDto implements Omit<UserEntity, 'id'> {
   phoneNumber: string;
 
   @Field(() => Date)
-  lastActiveInMs: number;
+  lastActiveInMs: Date;
 }

@@ -16,10 +16,25 @@ export const Input = (...args) => Args('input', ...args);
 
 export const Cookies = createParamDecorator(
   (cookieName: string, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest<ExpressRequest>();
+    const request =
+      GqlExecutionContext.create(ctx).getContext<RequestAndResponse>().req;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- We need to access property we don't know beforehand
     const cookies = (request.cookies?.[cookieName] ?? request.cookies) as
+      | Record<string, string>
+      | string;
+
+    return cookies;
+  },
+);
+
+export const SignedCookies = createParamDecorator(
+  (cookieName: string, ctx: ExecutionContext) => {
+    const request =
+      GqlExecutionContext.create(ctx).getContext<RequestAndResponse>().req;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- We need to access property we don't know beforehand
+    const cookies = (request.signedCookies?.[cookieName] ?? request.cookies) as
       | Record<string, string>
       | string;
 
@@ -51,4 +66,5 @@ export const Ip = createParamDecorator(
   },
 );
 
+// TODO to config
 export const Config = () => Inject(CONFIG_PROVIDER);

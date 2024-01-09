@@ -1,5 +1,20 @@
-import { CONFIG_PROVIDER, ConfigType } from 'src/config';
 import { DataSource } from 'typeorm';
+
+import { CONFIG_PROVIDER, ConfigType } from '../../config';
+
+// * For migrations only
+// TODO make better
+export const migrationDataSource = new DataSource({
+  type: 'postgres',
+  host: 'localhost', // * if run in docker, should be name of container
+  port: 5432,
+  username: 'postgres',
+  password: 'postgres',
+  database: 'postgres',
+  entities: ['dist/**/*.entity.js'],
+  migrationsRun: process.env.NODE_ENV === 'development',
+  synchronize: true,
+});
 
 export const databaseProviders = [
   {
@@ -15,8 +30,9 @@ export const databaseProviders = [
         username,
         password,
         database: name,
-        entities: [`${__dirname}/../**/*.entity.ts`],
+        entities: ['dist/**/*.entity.js'],
         synchronize: true,
+        migrationsRun: process.env.NODE_ENV === 'development',
       });
 
       return dataSource.initialize();

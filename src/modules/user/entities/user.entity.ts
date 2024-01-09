@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class UserEntity {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,6 +11,10 @@ export class UserEntity {
   @Column('text')
   phoneNumber: string;
 
-  @Column('int')
-  lastActiveInMs: number;
+  @Column('timestamp', {
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  lastActiveInMs: Date;
+
+  // TODO add sessions foreign key
 }
