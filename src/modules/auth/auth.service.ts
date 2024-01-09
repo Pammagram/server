@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 import { VerifySmsInput } from './dto/verifySms';
 import { Session, SessionEntity } from './entities/session.entity';
@@ -52,9 +53,7 @@ export class AuthService {
   createSession(
     data: Pick<Session, 'ip' | 'userAgent'>,
   ): Promise<SessionEntity> {
-    // TODO use some randomize here
-    // eslint-disable-next-line no-magic-numbers -- temporary solution
-    const sessionId = Math.random().toString(36);
+    const sessionId = uuid();
 
     const sessionData: Session = {
       ...data,
