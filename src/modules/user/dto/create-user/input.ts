@@ -5,6 +5,6 @@ import { UserDto } from '../user.dto';
 @InputType()
 export class CreateUserInput extends OmitType(
   UserDto,
-  ['id', 'lastActiveInMs'],
+  ['id', 'lastActiveInMs', 'sessions'],
   InputType,
 ) {}
