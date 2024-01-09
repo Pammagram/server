@@ -1,5 +1,9 @@
 # Building in Docker
 
-`docker build . --target development -t server`
+Create `.env.development` file with required credentials
 
-`docker run server`
+Build project
+`docker-compose build`
+
+Run
+`docker-compose up`
