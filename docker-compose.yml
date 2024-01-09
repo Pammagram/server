@@ -1,5 +1,6 @@
 services:
   database:
+    restart: always
     build:
       context: .
       dockerfile: docker/Dockerfile.db
@@ -13,6 +14,7 @@ services:
       - 5432:5432
 
   server:
+    restart: always
     build:
       context: .
       dockerfile: docker/Dockerfile.server
