@@ -1,4 +1,4 @@
-const EXCLUDE_NAMES_NAMING_CONVENTION_WORDS = ['reCaptcha'];
+const EXCLUDE_NAMES_NAMING_CONVENTION_WORDS = ['reCaptcha', 'uuid'];
 
 const EXCLUDE_NAMES_NAMING_CONVENTION_REGEXPS = [
   '.*URL.*',
@@ -109,6 +109,9 @@ const spellCheckerRule = {
     'error',
     {
       checkComments: true,
+      cspell: {
+        words: EXCLUDE_NAMES_NAMING_CONVENTION_WORDS,
+      },
     },
   ],
 };

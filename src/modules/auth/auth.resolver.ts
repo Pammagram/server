@@ -3,6 +3,7 @@ import {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from 'express';
+import { v4 as uuid } from 'uuid';
 
 import { AuthService } from './auth.service';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
@@ -29,9 +30,7 @@ export class AuthResolver {
     @Request() request: ExpressRequest,
     @Input() input: VerifySmsInput,
   ): VerifySmsOutput {
-    // const {} = input;
-    // eslint-disable-next-line no-magic-numbers
-    const sessionId = Math.random().toString(36);
+    const sessionId = uuid();
 
     const sessionData: Session = {
       active: true,
