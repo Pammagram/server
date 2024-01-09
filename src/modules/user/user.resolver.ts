@@ -31,6 +31,7 @@ export class UserResolver {
 
   // TODO user resolver
 
+  // TODO admins
   @Mutation(() => CreateUserOutput)
   async createUser(@Input() input: CreateUserInput): Promise<CreateUserOutput> {
     const data = await this.userService.createUser(input);

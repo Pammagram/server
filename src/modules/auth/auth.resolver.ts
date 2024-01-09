@@ -5,16 +5,27 @@ import {
 } from 'express';
 
 import { AuthService } from './auth.service';
+import { RegisterInput, RegisterOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
 import { Session } from './entities/session.entity';
 
 import { Input, Ip, Request, Response } from '../common/decorators';
 
+// TODO connect to db
 export const sessions: Session[] = [];
 
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
+
+  @Mutation(() => RegisterOutput)
+  async register(@Input() input: RegisterInput): Promise<RegisterOutput> {
+    const user = await this.authService.register(input);
+
+    return {
+      data: user,
+    };
+  }
 
   @Mutation(() => Boolean)
   sendSms(): true {
