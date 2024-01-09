@@ -1,12 +1,26 @@
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
+import { CONFIG_PROVIDER, ConfigType } from 'src/config';
 
-import { AppModule } from './modules/app/app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const config = app.get<ConfigType>(CONFIG_PROVIDER);
 
-  // eslint-disable-next-line no-magic-numbers -- must be removed in the future.
-  await app.listen(8080);
+  const { cookieSecret } = config.security;
+
+  app.use(cookieParser(cookieSecret));
+
+  const { port } = config.app;
+
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  });
+
+  await app.listen(port);
 }
 
 void bootstrap();

@@ -1,6 +1,4 @@
-const EXCLUDE_NAMES_NAMING_CONVENTION_WORDS = [
-  'reCaptcha',
-];
+const EXCLUDE_NAMES_NAMING_CONVENTION_WORDS = ['reCaptcha', 'uuid'];
 
 const EXCLUDE_NAMES_NAMING_CONVENTION_REGEXPS = [
   '.*URL.*',
@@ -111,6 +109,9 @@ const spellCheckerRule = {
     'error',
     {
       checkComments: true,
+      cspell: {
+        words: EXCLUDE_NAMES_NAMING_CONVENTION_WORDS,
+      },
     },
   ],
 };
@@ -136,32 +137,6 @@ const importRules = {
   'import/extensions': 'off',
   'import/no-extraneous-dependencies': ['error'],
   ...importSortOrderRule,
-};
-
-const reactRules = {
-  'react/react-in-jsx-scope': 'off',
-  'react/jsx-uses-react': 'off',
-  'react/display-name': 'off',
-  'react/prop-types': 'off',
-  'react/no-array-index-key': 'off',
-  'react-hooks/exhaustive-deps': 'off',
-  'react/style-prop-object': 'off', // we allow to use string as prop
-  'react/require-default-props': 'off',
-  'react/jsx-props-no-spreading': 'off',
-  'react/no-unescaped-entities': 'off',
-  'react/function-component-definition': [
-    'error',
-    {
-      namedComponents: 'arrow-function',
-      unnamedComponents: 'arrow-function',
-    },
-  ],
-};
-
-const reactNativeRules = {
-  'react-native/no-inline-styles': 'warn', // All react-native styles must be move out to a styles object
-  'react-native/split-platform-components': 'error',
-  'react-native/no-single-element-style-arrays': 'error',
 };
 
 const paddingRules = {
@@ -348,6 +323,12 @@ const override = {
       '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
+  classMethods: {
+    rules: {
+      'class-methods-use-this': 'off',
+    },
+    files: ['**/*.ts'],
+  },
   namingConventionExceptions: {
     files: [
       'src/configs/*.ts',
@@ -372,6 +353,14 @@ const override = {
       'no-magic-numbers': 'off',
     },
   },
+  env: {
+    files: ['env.d.ts', 'src/config/**.ts'],
+    rules: {
+      'no-magic-numbers': 'off',
+      'typescript-sort-keys/interface': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+    },
+  },
   assets: {
     files: ['**/*/assets/**/*.ts'],
     rules: {
@@ -383,28 +372,12 @@ const override = {
       '@typescript-eslint/naming-convention': 'off',
     },
   },
-  restrictedExports: {
-    files: ['src/app/**/*.tsx'],
-    rules: {
-      'no-restricted-exports': 'off',
-    },
-  },
-  mjsFiles: {
-    files: ['*.mjs'],
-    rules: {
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/naming-convention': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      'no-useless-escape': 'off',
-    },
-  },
 };
 
 /**
  * @type {import('eslint').Linter.Config}
  */
 module.exports = {
-  parser: '@typescript-eslint/parser',
   extends: [
     'airbnb',
     'airbnb/hooks',
@@ -418,6 +391,7 @@ module.exports = {
     'plugin:eslint-comments/recommended',
     'plugin:@cspell/recommended',
   ],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: 'tsconfig.json',
@@ -447,8 +421,6 @@ module.exports = {
   rules: {
     ...initialRules,
     ...tsRules,
-    ...reactRules,
-    ...reactNativeRules,
     ...spellCheckerRule,
     ...importRules,
     ...paddingRules,
