@@ -10,3 +10,5 @@ export const authProviders = [
     inject: ['DATA_SOURCE'],
   },
 ];
+
+export * from './session.entity';

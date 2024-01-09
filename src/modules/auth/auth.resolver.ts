@@ -40,11 +40,14 @@ export class AuthResolver {
     @Request() request: ExpressRequest,
     @Input() input: VerifySmsInput,
   ): Promise<VerifySmsOutput> {
+    const { phoneNumber } = input;
+
     await this.authService.verifySms(input);
 
     const { sessionId } = await this.authService.createSession({
       userAgent: request.headers['user-agent'],
       ip,
+      phoneNumber,
     });
 
     // TODO move sessionId to constants
@@ -54,9 +57,7 @@ export class AuthResolver {
       signed: true,
     });
 
-    const user = await this.userService.strictFindByPhoneNumber(
-      input.phoneNumber,
-    );
+    const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
 
     return {
       data: user,

@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { SessionDto } from 'src/modules/auth/dto';
 
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 
 @ObjectType()
 export class UserDto implements User {
@@ -15,4 +16,7 @@ export class UserDto implements User {
 
   @Field(() => Date)
   lastActiveInMs: Date;
+
+  @Field(() => [SessionDto])
+  sessions: SessionDto[];
 }

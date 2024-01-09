@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from 'src/modules/user/entities';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export type Session = {
   active: boolean;
@@ -9,7 +10,7 @@ export type Session = {
 };
 
 @Entity()
-export class SessionEntity {
+export class SessionEntity implements Session {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -29,4 +30,7 @@ export class SessionEntity {
 
   @Column('text')
   sessionId: string;
+
+  @ManyToOne(() => UserEntity, (user) => user.sessions)
+  user: UserEntity;
 }

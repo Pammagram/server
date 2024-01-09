@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { VerifySmsInput } from './dto/verifySms';
-import { Session, SessionEntity } from './entities/session.entity';
+import { SessionDto, VerifySmsInput } from './dto';
+import { SessionEntity } from './entities';
 
 import { UserService } from '../user/user.service';
 
@@ -50,17 +50,24 @@ export class AuthService {
   }
 
   // TODO move to session sub module in future
-  createSession(
-    data: Pick<Session, 'ip' | 'userAgent'>,
+  async createSession(
+    data: Pick<SessionDto, 'ip' | 'userAgent'> & { phoneNumber: string },
   ): Promise<SessionEntity> {
+    const { ip, phoneNumber, userAgent } = data;
+
     const sessionId = uuid();
 
-    const sessionData: Session = {
-      ...data,
+    const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
+
+    // TODO connect user here
+    const sessionData = {
       sessionId,
+      user,
       active: false,
       lastVisitInMs: new Date(0),
-    };
+      ip,
+      userAgent,
+    } satisfies Partial<SessionDto>;
 
     return this.sessionRepository.save(sessionData);
   }

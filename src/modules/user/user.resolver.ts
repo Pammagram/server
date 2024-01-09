@@ -1,8 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { CreateUserInput, CreateUserOutput } from './dto';
-import { UserDto } from './dto/user.dto';
+import { CreateUserInput, CreateUserOutput, UserDto } from './dto';
 import { UserService } from './user.service';
 
 import { AuthGuard } from '../auth/guards/auth';
