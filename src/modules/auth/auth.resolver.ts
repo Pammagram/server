@@ -6,16 +6,9 @@ import {
 
 import { AuthService } from './auth.service';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
+import { Session } from './entities/session.entity';
 
 import { Input, Ip, Request, Response } from '../common/decorators';
-
-export type Session = {
-  active: boolean;
-  ip: string;
-  lastVisitInMs: number;
-  sessionId: string;
-  userAgent: string;
-};
 
 export const sessions: Session[] = [];
 

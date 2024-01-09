@@ -1,10 +1,10 @@
 import { createParamDecorator, ExecutionContext, Inject } from '@nestjs/common';
 import { Args, GqlExecutionContext } from '@nestjs/graphql';
-import { CONFIG_PROVIDER } from 'config';
 import {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from 'express';
+import { CONFIG_PROVIDER } from 'src/config';
 
 export type RequestAndResponse = {
   req: ExpressRequest;

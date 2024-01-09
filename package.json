@@ -38,8 +38,11 @@
     "express": "^4.18.2",
     "graphql": "^16.8.1",
     "joi": "^17.11.0",
+    "mysql2": "^3.7.0",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.19"
   },
   "devDependencies": {
     "@cspell/eslint-plugin": "^7.3.6",

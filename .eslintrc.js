@@ -351,7 +351,7 @@ const override = {
     },
   },
   env: {
-    files: ['env.d.ts', 'config/**.ts'],
+    files: ['env.d.ts', 'src/config/**.ts'],
     rules: {
       'no-magic-numbers': 'off',
       'typescript-sort-keys/interface': 'off',

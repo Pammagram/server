@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { ConfigType } from 'config';
+import { ConfigType } from 'src/config';
 import { Config, RequestAndResponse } from 'src/modules/common/decorators';
 
 import { sessions } from '../auth.resolver';

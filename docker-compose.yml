@@ -1,0 +1,30 @@
+services:
+  database:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.db
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=pammagram
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server
+      # Only will build development stage from our dockerfile
+      target: development
+    volumes:
+      - ./src:/server/src
+    env_file:
+      - .env.development
+    # Run a command against the development stage of the image
+    command: npm run start:dev
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
