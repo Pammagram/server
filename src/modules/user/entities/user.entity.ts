@@ -7,7 +7,7 @@ export class UserEntity {
   id: number;
 
   @Column({ length: 500, nullable: true })
-  username?: string;
+  username: string | null;
 
   // TODO first name last name
 
@@ -16,6 +16,7 @@ export class UserEntity {
 
   @Column('timestamp', {
     default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
   })
   lastActiveInMs: Date;
 
