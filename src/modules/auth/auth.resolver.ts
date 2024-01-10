@@ -4,6 +4,7 @@ import {
   Response as ExpressResponse,
 } from 'express';
 
+import { SESSION_ID } from './auth.constants';
 import { AuthService } from './auth.service';
 import { SendSmsInput, SendSmsOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
@@ -51,7 +52,7 @@ export class AuthResolver {
     });
 
     // TODO move sessionId to constants
-    response.cookie('sessionId', sessionId, {
+    response.cookie(SESSION_ID, sessionId, {
       httpOnly: true,
       secure: true,
       signed: true,
@@ -67,11 +68,11 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   async logout(
     @Response() response: ExpressResponse,
-    @SignedCookies('sessionId') sessionId: string,
+    @SignedCookies(SESSION_ID) sessionId: string,
   ): Promise<boolean> {
     await this.authService.removeSession(sessionId);
 
-    response.cookie('sessionId', null);
+    response.cookie(SESSION_ID, null);
 
     return true;
   }
