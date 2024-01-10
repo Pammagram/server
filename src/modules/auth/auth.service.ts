@@ -1,26 +1,42 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { v4 as uuid } from 'uuid';
-
-import { SessionDto, VerifySmsInput } from './dto';
-import { SessionEntity } from './entities';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UserService } from '../user/user.service';
 
+// eslint-disable-next-line no-magic-numbers -- Amount of spaces
+const prettify = (value: unknown): string => JSON.stringify(value, null, 2);
+
+type Otp = {
+  code: number;
+  phoneNumber: string;
+};
+
+let otpCodes: Otp[] = [];
+
 @Injectable()
 export class AuthService {
-  constructor(
-    @Inject('SESSION_REPOSITORY')
-    private sessionRepository: Repository<SessionEntity>,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  async verifySms(_input: VerifySmsInput): Promise<boolean> {
-    await new Promise<void>((res) => {
-      res();
-    });
+  verifySms(phoneNumber: string, code: number): boolean {
+    const possibleOtpCodes = otpCodes.filter(
+      (otp) => otp.phoneNumber === phoneNumber,
+    );
 
-    // TODO throw error if code is invalid
+    console.debug('Possible otp codes: ', prettify(possibleOtpCodes));
+
+    const otp = possibleOtpCodes.find(
+      (existingOtp) => existingOtp.code === code,
+    );
+
+    if (!otp) {
+      throw new NotFoundException("Didn't found matching otp");
+    }
+
+    otpCodes = otpCodes.filter(
+      (existingOtp) =>
+        existingOtp.code !== otp.code &&
+        existingOtp.phoneNumber !== otp.phoneNumber,
+    );
+
     return true;
   }
 
@@ -29,73 +45,33 @@ export class AuthService {
     let user = await this.userService.findByPhoneNumber(phoneNumber);
 
     if (!user) {
+      console.debug('User does not exist, creating...');
+      // ? TODO we can utilize redis and store temp user there with TMP
       user = await this.userService.createUser({
         phoneNumber,
         username: null,
       });
     }
 
-    await this.sendOtp(phoneNumber);
+    this.sendOtp(phoneNumber);
 
     return true;
   }
 
-  // TODO
-  async sendOtp(_phoneNumber: string): Promise<boolean> {
-    await new Promise<void>((res) => {
-      res();
+  sendOtp(phoneNumber: string): boolean {
+    // TODO save otp code somewhere
+    const maxNumber = 9999;
+    const minNumber = 0;
+    const otpCode = Number(minNumber + (Math.random() * maxNumber).toFixed(0));
+
+    otpCodes.push({
+      code: otpCode,
+      phoneNumber,
     });
 
-    return true;
-  }
+    console.debug('Generated otp code: ', otpCode);
 
-  // TODO move to session sub module in future
-  async createSession(
-    data: Pick<SessionDto, 'ip' | 'userAgent'> & { phoneNumber: string },
-  ): Promise<SessionEntity> {
-    const { ip, phoneNumber, userAgent } = data;
-
-    const sessionId = uuid();
-
-    const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
-
-    // TODO connect user here
-    const sessionData = {
-      sessionId,
-      user,
-      active: false,
-      lastVisitInMs: new Date(0),
-      ip,
-      userAgent,
-    } satisfies Partial<SessionDto>;
-
-    return this.sessionRepository.save(sessionData);
-  }
-
-  removeSession(sessionId: string) {
-    return this.sessionRepository.delete({
-      sessionId,
-    });
-  }
-
-  findSessionById(sessionId: string): Promise<SessionEntity | null> {
-    return this.sessionRepository.findOne({
-      where: {
-        sessionId,
-      },
-    });
-  }
-
-  async updateSessionById(
-    sessionId: string,
-    data: Partial<Omit<SessionEntity, 'id'>>,
-  ): Promise<boolean> {
-    await this.sessionRepository.update(
-      {
-        sessionId,
-      },
-      data,
-    );
+    // TODO send message
 
     return true;
   }

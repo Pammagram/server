@@ -1,4 +1,4 @@
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   Request as ExpressRequest,
   Response as ExpressResponse,
@@ -16,6 +16,8 @@ import {
   Response,
   SignedCookies,
 } from '../common/decorators';
+import { SessionService } from '../session/session.service';
+import { UserDto } from '../user/dto';
 import { UserService } from '../user/user.service';
 
 @Resolver()
@@ -23,7 +25,13 @@ export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly sessionService: SessionService,
   ) {}
+
+  @Query(() => UserDto)
+  async me(@SignedCookies(SESSION_ID) sessionId: string): Promise<UserDto> {
+    return this.sessionService.findUserBySessionId(sessionId);
+  }
 
   @Mutation(() => SendSmsOutput)
   async sendSms(@Input() input: SendSmsInput): Promise<SendSmsOutput> {
@@ -41,14 +49,16 @@ export class AuthResolver {
     @Request() request: ExpressRequest,
     @Input() input: VerifySmsInput,
   ): Promise<VerifySmsOutput> {
-    const { phoneNumber } = input;
+    const { phoneNumber, code } = input;
 
-    await this.authService.verifySms(input);
+    this.authService.verifySms(phoneNumber, code);
 
-    const { sessionId } = await this.authService.createSession({
+    const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
+
+    const { sessionId } = await this.sessionService.createSession({
       userAgent: request.headers['user-agent'],
       ip,
-      phoneNumber,
+      user,
     });
 
     // TODO move sessionId to constants
@@ -57,8 +67,6 @@ export class AuthResolver {
       secure: true,
       signed: true,
     });
-
-    const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
 
     return {
       data: user,
@@ -70,7 +78,7 @@ export class AuthResolver {
     @Response() response: ExpressResponse,
     @SignedCookies(SESSION_ID) sessionId: string,
   ): Promise<boolean> {
-    await this.authService.removeSession(sessionId);
+    await this.sessionService.removeBySessionId(sessionId);
 
     response.cookie(SESSION_ID, null);
 

@@ -7,6 +7,7 @@ import { AppResolver } from './app.resolver';
 import { AuthModule } from './modules/auth/auth.module';
 import { DbModule } from './modules/db/db.module';
 import { GraphqlModule } from './modules/graphql/graphql.module';
+import { SessionModule } from './modules/session/session.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { UserModule } from './modules/user/user.module';
     DbModule,
     UserModule,
     AuthModule,
+    SessionModule,
   ],
   controllers: [AppController],
   providers: [AppResolver],

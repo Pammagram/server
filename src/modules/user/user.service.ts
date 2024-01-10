@@ -24,9 +24,8 @@ export class UserService {
   }
 
   findBySessionId(_sessionId: string): Promise<UserDto | null> {
-    // TODO implement when merged with session relations
-
     throw new Error();
+    // // TODO implement when merged with session relations
     // return this.usersRepository.findOne({
     //   where: {
     //     phoneNumber,

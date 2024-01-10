@@ -7,8 +7,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { ConfigType } from 'src/config';
 import { Config, RequestAndResponse } from 'src/modules/common/decorators';
-
-import { AuthService } from '../auth.service';
+import { SessionService } from 'src/modules/session/session.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -16,7 +15,7 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     @Config() configService: ConfigType,
-    private readonly authService: AuthService,
+    private readonly sessionService: SessionService,
   ) {
     this.config = configService.auth;
   }
@@ -27,7 +26,7 @@ export class AuthGuard implements CanActivate {
 
     const { sessionId } = request.signedCookies as Record<string, string>;
 
-    const session = await this.authService.findSessionById(sessionId);
+    const session = await this.sessionService.findBySessionId(sessionId);
 
     if (!session) {
       console.debug('Session not found');
@@ -48,7 +47,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    await this.authService.updateSessionById(sessionId, {
+    await this.sessionService.updateBySessionId(sessionId, {
       lastVisitInMs: new Date(currentTimeInMs),
     });
 

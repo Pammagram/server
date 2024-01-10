@@ -17,7 +17,7 @@ export class SessionDto implements Session {
   @Field(() => Date)
   lastVisitInMs: Date;
 
-  @Field(() => String)
+  // ! We should not give user access to sessionId because it's not safe
   sessionId: string;
 
   @Field(() => UserDto)

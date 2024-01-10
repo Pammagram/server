@@ -1,4 +1,4 @@
-import { SessionEntity } from 'src/modules/auth/entities';
+import { SessionEntity } from 'src/modules/session/entities';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -25,4 +25,4 @@ export class UserEntity {
   sessions: SessionEntity[];
 }
 
-export type User = Omit<UserEntity, 'sessions'>;
+export type User = UserEntity;

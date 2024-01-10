@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { SessionDto } from 'src/modules/auth/dto';
+import { SessionDto } from 'src/modules/session/dto';
 
 import { User } from '../entities';
 
