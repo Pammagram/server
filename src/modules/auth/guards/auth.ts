@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { genSalt, hash } from 'bcrypt';
 import { ConfigType } from 'src/config';
 import { Config, RequestAndResponse } from 'src/modules/common/decorators';
 import { SessionService } from 'src/modules/session/session.service';
@@ -26,7 +27,13 @@ export class AuthGuard implements CanActivate {
 
     const { sessionId } = request.signedCookies as Record<string, string>;
 
-    const session = await this.sessionService.findBySessionId(sessionId);
+    const { saltRounds } = this.config;
+    const salt = await genSalt(saltRounds);
+
+    const sessionIdEncrypted = await hash(sessionId, salt);
+
+    const session =
+      await this.sessionService.findBySessionId(sessionIdEncrypted);
 
     if (!session) {
       console.debug('Session not found');
@@ -47,7 +54,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    await this.sessionService.updateBySessionId(sessionId, {
+    await this.sessionService.updateBySessionId(sessionIdEncrypted, {
       lastVisitInMs: new Date(currentTimeInMs),
     });
 

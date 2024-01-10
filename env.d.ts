@@ -9,6 +9,7 @@ declare global {
 
       // Auth
       SESSION_TIMEOUT_IN_MS: number;
+      SALT_ROUNDS: number;
       TWILIO_VERIFICATION_SERVICE_ID: string;
       TWILIO_AUTH_TOKEN: string;
       TWILIO_ACCOUNT_SERVICE_ID: string;

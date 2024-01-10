@@ -19,6 +19,10 @@ COPY tsconfig*.json ./
 COPY .env.development ./
 COPY src ./src
 
+# workaround for incompatibility of os
+RUN npm uninstall bcrypt
+RUN npm install bcrypt
+
 CMD [ "npm", "run", "start:dev" ]
 
 EXPOSE 8080

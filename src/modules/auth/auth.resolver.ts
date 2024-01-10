@@ -33,7 +33,7 @@ export class AuthResolver {
 
   @Query(() => UserDto)
   async me(@SignedCookies(SESSION_ID) sessionId: string): Promise<UserDto> {
-    return this.sessionService.findUserBySessionId(sessionId);
+    return this.sessionService.findUserBySessionIdOrFail(sessionId);
   }
 
   @Mutation(() => SendSmsOutput)
@@ -71,9 +71,9 @@ export class AuthResolver {
       userAgent: request.headers['user-agent'],
       ip,
       user,
+      rememberMe: input.rememberMe,
     });
 
-    // TODO move sessionId to constants
     response.cookie(SESSION_ID, sessionId, {
       httpOnly: true,
       secure: true,

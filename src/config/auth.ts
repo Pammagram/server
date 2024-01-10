@@ -5,6 +5,7 @@ export const authValidationSchema = Joi.object({
   TWILIO_ACCOUNT_SERVICE_ID: Joi.string().required(),
   TWILIO_AUTH_TOKEN: Joi.string().required(),
   TWILIO_VERIFICATION_SERVICE_ID: Joi.string().required(),
+  SALT_ROUNDS: Joi.number().required(),
 });
 
 export default () => ({
@@ -12,4 +13,5 @@ export default () => ({
   twilioAccountServiceId: process.env.TWILIO_ACCOUNT_SERVICE_ID,
   twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
   twilioVerificationServiceId: process.env.TWILIO_VERIFICATION_SERVICE_ID,
+  saltRounds: Number(process.env.SALT_ROUNDS),
 });

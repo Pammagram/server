@@ -8,7 +8,6 @@ export class VerifySmsInput {
   @Field(() => String)
   phoneNumber: string;
 
-  // TODO use this
   @Field(() => Boolean, { nullable: true })
   rememberMe?: boolean;
 }
