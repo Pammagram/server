@@ -52,7 +52,7 @@ export class MessagingService {
         code,
       });
 
-    if (!(verification.status === 'approved')) {
+    if (verification.status !== 'approved') {
       throw new NotAcceptableException('Invalid verification code');
     }
   }
