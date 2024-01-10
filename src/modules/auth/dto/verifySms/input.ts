@@ -1,9 +1,9 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class VerifySmsInput {
-  @Field(() => Int)
-  code: number;
+  @Field(() => String)
+  code: string;
 
   @Field(() => String)
   phoneNumber: string;

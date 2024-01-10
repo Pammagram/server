@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   Request as ExpressRequest,
@@ -16,6 +17,7 @@ import {
   Response,
   SignedCookies,
 } from '../common/decorators';
+import { MessagingService } from '../messaging/messaging.service';
 import { SessionService } from '../session/session.service';
 import { UserDto } from '../user/dto';
 import { UserService } from '../user/user.service';
@@ -26,6 +28,7 @@ export class AuthResolver {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly sessionService: SessionService,
+    private readonly messagingService: MessagingService,
   ) {}
 
   @Query(() => UserDto)
@@ -51,7 +54,16 @@ export class AuthResolver {
   ): Promise<VerifySmsOutput> {
     const { phoneNumber, code } = input;
 
-    this.authService.verifySms(phoneNumber, code);
+    try {
+      await this.messagingService.validateVerificationCode({
+        phoneNumber,
+        code,
+      });
+    } catch (error) {
+      throw new NotFoundException(
+        'Verification code not found. Try sending sms again',
+      );
+    }
 
     const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
 
