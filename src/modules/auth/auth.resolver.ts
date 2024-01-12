@@ -1,61 +1,99 @@
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { NotFoundException } from '@nestjs/common';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from 'express';
-import { v4 as uuid } from 'uuid';
 
+import { SESSION_ID } from './auth.constants';
 import { AuthService } from './auth.service';
+import { SendSmsInput, SendSmsOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
-import { Session } from './entities/session.entity';
 
-import { Input, Ip, Request, Response } from '../common/decorators';
-
-export const sessions: Session[] = [];
+import {
+  Input,
+  Ip,
+  Request,
+  Response,
+  SignedCookies,
+} from '../common/decorators';
+import { MessagingService } from '../messaging/messaging.service';
+import { SessionService } from '../session/session.service';
+import { UserDto } from '../user/dto';
+import { UserService } from '../user/user.service';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+    private readonly sessionService: SessionService,
+    private readonly messagingService: MessagingService,
+  ) {}
 
-  @Mutation(() => Boolean)
-  sendSms(): true {
-    return true;
+  @Query(() => UserDto)
+  async me(@SignedCookies(SESSION_ID) sessionId: string): Promise<UserDto> {
+    return this.sessionService.findUserBySessionIdOrFail(sessionId);
   }
 
-  // ? TODO return user on successful login
+  @Mutation(() => SendSmsOutput)
+  async sendSms(@Input() input: SendSmsInput): Promise<SendSmsOutput> {
+    await this.authService.sendSms(input.phoneNumber);
+
+    return {
+      data: true,
+    };
+  }
+
   @Mutation(() => VerifySmsOutput)
-  verifySms(
+  async verifySms(
     @Ip() ip: string,
     @Response() response: ExpressResponse,
     @Request() request: ExpressRequest,
     @Input() input: VerifySmsInput,
-  ): VerifySmsOutput {
-    const sessionId = uuid();
+  ): Promise<VerifySmsOutput> {
+    const { phoneNumber, code } = input;
 
-    const sessionData: Session = {
-      active: true,
-      ip,
-      lastVisitInMs: Date.now(),
-      sessionId,
+    try {
+      await this.messagingService.validateVerificationCode({
+        phoneNumber,
+        code,
+      });
+    } catch (error) {
+      throw new NotFoundException(
+        'Verification code not found. Try sending sms again',
+      );
+    }
+
+    const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
+
+    const { sessionId } = await this.sessionService.createSession({
       userAgent: request.headers['user-agent'],
-    };
+      ip,
+      user,
+      rememberMe: input.rememberMe,
+    });
 
-    sessions.push(sessionData);
-
-    console.debug('sessions', sessions);
-
-    // TODO to constants
-    response.cookie('sessionId', sessionId, {
+    response.cookie(SESSION_ID, sessionId, {
       httpOnly: true,
       secure: true,
       signed: true,
     });
 
-    return this.authService.verifySms(input);
+    return {
+      data: user,
+    };
   }
 
   @Mutation(() => Boolean)
-  resendSms(): true {
+  async logout(
+    @Response() response: ExpressResponse,
+    @SignedCookies(SESSION_ID) sessionId: string,
+  ): Promise<boolean> {
+    await this.sessionService.removeBySessionId(sessionId);
+
+    response.cookie(SESSION_ID, null);
+
     return true;
   }
 }

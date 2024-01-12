@@ -5,22 +5,12 @@ import { CreateUserInput, CreateUserOutput, UserDto } from './dto';
 import { UserService } from './user.service';
 
 import { AuthGuard } from '../auth/guards/auth';
-import { Input, SignedCookies } from '../common/decorators';
+import { Input } from '../common/decorators';
 
 @UseGuards(AuthGuard)
 @Resolver()
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
-
-  @Query(() => UserDto)
-  me(@SignedCookies('sessionId') _sessionId: string): UserDto {
-    return {
-      lastActiveInMs: new Date(),
-      phoneNumber: '+38',
-      username: 'Max',
-      id: 0,
-    };
-  }
 
   // TODO add filtering
   @Query(() => [UserDto])
@@ -30,6 +20,7 @@ export class UserResolver {
 
   // TODO user resolver
 
+  // TODO admins
   @Mutation(() => CreateUserOutput)
   async createUser(@Input() input: CreateUserInput): Promise<CreateUserOutput> {
     const data = await this.userService.createUser(input);

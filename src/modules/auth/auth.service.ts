@@ -1,20 +1,30 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
-import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
-import { SessionEntity } from './entities';
+import { MessagingService } from '../messaging/messaging.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject('SESSION_REPOSITORY')
-    private sessionRepository: Repository<SessionEntity>,
+    private readonly userService: UserService,
+    private readonly messagingService: MessagingService,
   ) {}
 
-  verifySms(_input: VerifySmsInput): VerifySmsOutput {
-    // TODO validate token here
-    return {
-      sessionId: 'test',
-    };
+  // TODO cleanup of unutilized users
+  async sendSms(phoneNumber: string): Promise<true> {
+    let user = await this.userService.findByPhoneNumber(phoneNumber);
+
+    if (!user) {
+      console.debug('User does not exist, creating...');
+      // ? TODO we can utilize redis and store temp user there with TMP
+      user = await this.userService.createUser({
+        phoneNumber,
+        username: null,
+      });
+    }
+
+    await this.messagingService.sendVerificationCode({ phoneNumber });
+
+    return true;
   }
 }

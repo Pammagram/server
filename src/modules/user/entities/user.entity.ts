@@ -1,4 +1,4 @@
-import { SessionEntity } from 'src/modules/auth/entities';
+import { SessionEntity } from 'src/modules/session/entities';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -6,8 +6,10 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 500 })
-  username: string;
+  @Column({ length: 500, nullable: true })
+  username?: string;
+
+  // TODO first name last name
 
   @Column('text')
   phoneNumber: string;
@@ -23,4 +25,4 @@ export class UserEntity {
   sessions: SessionEntity[];
 }
 
-export type User = Omit<UserEntity, 'sessions'>;
+export type User = UserEntity;

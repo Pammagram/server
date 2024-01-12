@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 export type Session = {
   active: boolean;
   ip: string;
-  lastVisitInMs: number;
+  lastVisitInMs: Date;
   sessionId: string;
   userAgent: string;
 };
@@ -20,8 +20,10 @@ export class SessionEntity implements Session {
   @Column('text')
   userAgent: string;
 
-  @Column('int')
-  lastVisitInMs: number;
+  @Column('timestamp', {
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  lastVisitInMs: Date;
 
   @Column('boolean')
   active: boolean;
@@ -30,5 +32,5 @@ export class SessionEntity implements Session {
   sessionId: string;
 
   @ManyToOne(() => UserEntity, (user) => user.sessions)
-  user: UserEntity[];
+  user: UserEntity;
 }
