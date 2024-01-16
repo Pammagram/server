@@ -6,6 +6,7 @@ import {
 } from 'express';
 
 import { SESSION_ID } from './auth.constants';
+import { SessionId } from './auth.decorators';
 import { AuthService } from './auth.service';
 import { SendSmsInput, SendSmsOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
@@ -32,7 +33,7 @@ export class AuthResolver {
   ) {}
 
   @Query(() => UserDto)
-  async me(@SignedCookies(SESSION_ID) sessionId: string): Promise<UserDto> {
+  async me(@SessionId() sessionId: string): Promise<UserDto> {
     return this.sessionService.findUserBySessionIdOrFail(sessionId);
   }
 
