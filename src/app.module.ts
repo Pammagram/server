@@ -9,6 +9,7 @@ import { DbModule } from './modules/db/db.module';
 import { GraphqlModule } from './modules/graphql/graphql.module';
 import { SessionModule } from './modules/session/session.module';
 import { UserModule } from './modules/user/user.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
     AuthModule,
     SessionModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppResolver],
