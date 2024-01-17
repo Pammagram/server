@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { SessionDto } from './dto';
 import { SessionEntity } from './entities';
 
-import { Config } from '../common/decorators';
+// import { Config } from '../common/decorators';
 import { UserDto } from '../user/dto';
 import { UserEntity } from '../user/entities';
 
@@ -16,7 +16,7 @@ export class SessionService {
   // private readonly config: ConfigType['auth'];
 
   constructor(
-    @Config()
+    // @Config()
     // configService: ConfigType,
     @Inject('SESSION_REPOSITORY')
     private sessionRepository: Repository<SessionEntity>,

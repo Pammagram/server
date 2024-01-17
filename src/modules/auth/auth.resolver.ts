@@ -1,4 +1,5 @@
 // import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   Request as ExpressRequest,
@@ -10,6 +11,7 @@ import { SessionId } from './auth.decorators';
 import { AuthService } from './auth.service';
 import { SendSmsInput, SendSmsOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
+import { AuthGuard } from './guards';
 
 import {
   Input,
@@ -32,6 +34,7 @@ export class AuthResolver {
     private readonly messagingService: MessagingService,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Query(() => UserDto)
   async me(@SessionId() sessionId: string): Promise<UserDto> {
     return this.sessionService.findUserBySessionIdOrFail(sessionId);
@@ -55,16 +58,16 @@ export class AuthResolver {
   ): Promise<VerifySmsOutput> {
     const { phoneNumber, code } = input;
 
-    // try {
-    //   await this.messagingService.validateVerificationCode({
-    //     phoneNumber,
-    //     code,
-    //   });
-    // } catch (error) {
-    //   throw new NotFoundException(
-    //     'Verification code not found. Try sending sms again',
-    //   );
-    // }
+    try {
+      await this.messagingService.validateVerificationCode({
+        phoneNumber,
+        code,
+      });
+    } catch (error) {
+      throw new NotFoundException(
+        'Verification code not found. Try sending sms again',
+      );
+    }
 
     const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
 
@@ -86,6 +89,7 @@ export class AuthResolver {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => Boolean)
   async logout(
     @Response() response: ExpressResponse,
