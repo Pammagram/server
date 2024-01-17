@@ -302,7 +302,7 @@ const namingConventionRule = {
     },
     {
       selector: 'import',
-      format: ['camelCase', 'PascalCase'],
+      format: ['camelCase'],
     },
   ],
 };

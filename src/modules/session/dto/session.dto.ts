@@ -8,11 +8,11 @@ export class SessionDto implements Session {
   @Field(() => Int)
   id: number;
 
-  @Field(() => Boolean)
-  active: boolean;
-
   @Field(() => String)
   ip: string;
+
+  @Field(() => String)
+  userAgent: string;
 
   @Field(() => Date)
   lastVisitInMs: Date;
@@ -22,7 +22,4 @@ export class SessionDto implements Session {
 
   @Field(() => UserDto)
   user: UserDto;
-
-  @Field(() => String)
-  userAgent: string;
 }
