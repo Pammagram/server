@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { CreateUserInput, UserDto } from './dto';
 import { UserEntity } from './entities';
@@ -13,6 +13,14 @@ export class UserService {
 
   findAll(): Promise<UserEntity[]> {
     return this.usersRepository.find();
+  }
+
+  findByUserIds(userIds: number[]): Promise<UserEntity[]> {
+    return this.usersRepository.find({
+      where: {
+        id: In(userIds),
+      },
+    });
   }
 
   findByUserIdOrFail(userId: number): Promise<UserEntity> {
