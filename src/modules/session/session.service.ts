@@ -1,27 +1,37 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { genSalt, hash } from 'bcrypt';
-import { ConfigType } from 'src/config';
+// import { genSalt, hash } from 'bcrypt';
+// import { ConfigType } from 'src/config';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { SessionDto } from './dto';
 import { SessionEntity } from './entities';
 
-import { Config } from '../common/decorators';
+// import { Config } from '../common/decorators';
 import { UserDto } from '../user/dto';
 import { UserEntity } from '../user/entities';
 
 @Injectable()
 export class SessionService {
-  private readonly config: ConfigType['auth'];
+  // private readonly config: ConfigType['auth'];
 
   constructor(
-    @Config()
-    configService: ConfigType,
+    // @Config()
+    // configService: ConfigType,
     @Inject('SESSION_REPOSITORY')
     private sessionRepository: Repository<SessionEntity>,
   ) {
-    this.config = configService.auth;
+    // this.config = configService.auth;
+  }
+
+  async findByUserId(userId: number): Promise<SessionDto[]> {
+    return this.sessionRepository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
   }
 
   async createSession(
@@ -34,15 +44,14 @@ export class SessionService {
 
     const sessionId = uuid();
 
-    const { saltRounds } = this.config;
-    const salt = await genSalt(saltRounds);
+    // const { saltRounds } = this.config;
+    // const salt = await genSalt(saltRounds);
 
-    const sessionIdEncrypted = await hash(sessionId, salt);
+    // const sessionIdEncrypted = await hash(sessionId, salt);
 
     const sessionData = {
-      sessionId: sessionIdEncrypted,
+      sessionId,
       user,
-      active: false,
       ip,
       userAgent,
     } satisfies Partial<SessionDto>;

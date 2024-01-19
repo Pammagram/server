@@ -2,7 +2,6 @@ import { UserEntity } from 'src/modules/user/entities';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export type Session = {
-  active: boolean;
   ip: string;
   lastVisitInMs: Date;
   sessionId: string;
@@ -24,9 +23,6 @@ export class SessionEntity implements Session {
     default: () => 'CURRENT_TIMESTAMP',
   })
   lastVisitInMs: Date;
-
-  @Column('boolean')
-  active: boolean;
 
   @Column('text')
   sessionId: string;

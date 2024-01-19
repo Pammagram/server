@@ -15,22 +15,20 @@ export class UserService {
     return this.usersRepository.find();
   }
 
+  findByUserIdOrFail(userId: number): Promise<UserEntity> {
+    return this.usersRepository.findOneOrFail({
+      where: {
+        id: userId,
+      },
+    });
+  }
+
   findByPhoneNumber(phoneNumber: string): Promise<UserDto | null> {
     return this.usersRepository.findOne({
       where: {
         phoneNumber,
       },
     });
-  }
-
-  findBySessionId(_sessionId: string): Promise<UserDto | null> {
-    throw new Error();
-    // // TODO implement when merged with session relations
-    // return this.usersRepository.findOne({
-    //   where: {
-    //     phoneNumber,
-    //   },
-    // });
   }
 
   strictFindBySessionId(_sessionId: string): Promise<UserDto> {
@@ -56,6 +54,12 @@ export class UserService {
 
   createUser(input: CreateUserInput): Promise<UserDto> {
     return this.usersRepository.save(input);
+  }
+
+  async updateByUserId(userId: number, data: Partial<UserDto>): Promise<true> {
+    await this.usersRepository.update(userId, data);
+
+    return true;
   }
 
   // async getUserBySessionId(sessionId: string): Promise<User> {

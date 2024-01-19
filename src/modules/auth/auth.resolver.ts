@@ -1,4 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
+// import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   Request as ExpressRequest,
@@ -6,9 +7,11 @@ import {
 } from 'express';
 
 import { SESSION_ID } from './auth.constants';
+import { SessionId } from './auth.decorators';
 import { AuthService } from './auth.service';
 import { SendSmsInput, SendSmsOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
+import { AuthGuard } from './guards';
 
 import {
   Input,
@@ -31,8 +34,9 @@ export class AuthResolver {
     private readonly messagingService: MessagingService,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Query(() => UserDto)
-  async me(@SignedCookies(SESSION_ID) sessionId: string): Promise<UserDto> {
+  async me(@SessionId() sessionId: string): Promise<UserDto> {
     return this.sessionService.findUserBySessionIdOrFail(sessionId);
   }
 
@@ -85,6 +89,7 @@ export class AuthResolver {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => Boolean)
   async logout(
     @Response() response: ExpressResponse,
