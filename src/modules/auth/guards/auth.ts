@@ -5,20 +5,23 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { genSalt, hash } from 'bcrypt';
-import { ConfigType } from 'src/config';
-import { Config, RequestAndResponse } from 'src/modules/common/decorators';
+// import { genSalt, hash } from 'bcrypt';
+// import { ConfigType } from 'src/config';
+import {
+  // Config,
+  RequestAndResponse,
+} from 'src/modules/common/decorators';
 import { SessionService } from 'src/modules/session/session.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  private readonly config: ConfigType['auth'];
+  // private readonly config: ConfigType['auth'];
 
   constructor(
-    @Config() configService: ConfigType,
+    // @Config() configService: ConfigType,
     private readonly sessionService: SessionService,
   ) {
-    this.config = configService.auth;
+    // this.config = configService.auth;
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,13 +30,17 @@ export class AuthGuard implements CanActivate {
 
     const { sessionId } = request.signedCookies as Record<string, string>;
 
-    const { saltRounds } = this.config;
-    const salt = await genSalt(saltRounds);
+    if (!sessionId) {
+      console.debug('Session id is not found');
 
-    const sessionIdEncrypted = await hash(sessionId, salt);
+      throw new UnauthorizedException();
+    }
+    // const { saltRounds } = this.config;
+    // const salt = await genSalt(saltRounds);
 
-    const session =
-      await this.sessionService.findBySessionId(sessionIdEncrypted);
+    // const sessionIdEncrypted = await hash(sessionId, salt);
+
+    const session = await this.sessionService.findBySessionId(sessionId);
 
     if (!session) {
       console.debug('Session not found');
@@ -44,17 +51,17 @@ export class AuthGuard implements CanActivate {
     // * Last activity exceeds session timeout, require login again
     const currentTimeInMs = Date.now();
 
-    if (
-      currentTimeInMs - session.lastVisitInMs.getTime() >
-      this.config.sessionTimeoutInMs
-    ) {
-      // TODO nest logger
-      console.debug('Session expired');
+    // if (
+    //   currentTimeInMs - session.lastVisitInMs.getTime() >
+    //   this.config.sessionTimeoutInMs
+    // ) {
+    //   // TODO nest logger
+    //   console.debug('Session expired');
 
-      throw new UnauthorizedException();
-    }
+    //   throw new UnauthorizedException();
+    // }
 
-    await this.sessionService.updateBySessionId(sessionIdEncrypted, {
+    await this.sessionService.updateBySessionId(sessionId, {
       lastVisitInMs: new Date(currentTimeInMs),
     });
 
