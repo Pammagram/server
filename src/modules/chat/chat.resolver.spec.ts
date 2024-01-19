@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { ChatResolver } from './chat.resolver';
 
 describe('ChatResolver', () => {

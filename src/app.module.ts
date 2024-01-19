@@ -5,11 +5,11 @@ import config, { configValidationSchema } from 'src/config';
 import { AppController } from './app.controller';
 import { AppResolver } from './app.resolver';
 import { AuthModule } from './modules/auth/auth.module';
+import { ChatModule } from './modules/chat/chat.module';
 import { DbModule } from './modules/db/db.module';
 import { GraphqlModule } from './modules/graphql/graphql.module';
 import { SessionModule } from './modules/session/session.module';
 import { UserModule } from './modules/user/user.module';
-import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
