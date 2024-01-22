@@ -3,3 +3,7 @@ export * from './chat';
 export * from './createChat';
 export * from './chats';
 export * from './removeChat';
+export * from './addMembers';
+export * from './addMessage';
+export * from './messages';
+export * from './message.dto';

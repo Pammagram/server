@@ -18,7 +18,9 @@ export class UserEntity {
 
   // TODO first name last name
 
-  @Column('text')
+  @Column('text', {
+    unique: true,
+  })
   phoneNumber: string;
 
   @Column('timestamp', {
@@ -27,7 +29,7 @@ export class UserEntity {
   lastActiveInMs: Date;
 
   @OneToMany(() => SessionEntity, (session) => session.user, {
-    onDelete: 'CASCADE',
+    onDelete: 'CASCADE', // TODO should it be here?
   })
   sessions: SessionEntity[];
 

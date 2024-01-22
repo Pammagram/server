@@ -39,17 +39,6 @@ export class UserService {
     });
   }
 
-  strictFindBySessionId(_sessionId: string): Promise<UserDto> {
-    // TODO implement when merged with session relations
-
-    throw new Error();
-    // return this.usersRepository.findOne({
-    //   where: {
-    //     phoneNumber,
-    //   },
-    // });
-  }
-
   async strictFindByPhoneNumber(phoneNumber: string): Promise<UserDto> {
     const user = await this.usersRepository.findOneOrFail({
       where: {

@@ -1,8 +1,9 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { ChatDto, CreateChatInput } from './dto';
+import { ChatDto, CreateChatInput, MessageDto } from './dto';
 import { ChatEntity, ChatType } from './entities';
+import { MessageEntity } from './entities/message.entity';
 
 import { UserService } from '../user/user.service';
 
@@ -11,11 +12,17 @@ export class ChatService {
   constructor(
     @Inject('CHAT_REPOSITORY')
     private readonly chatsRepository: Repository<ChatEntity>,
+    @Inject('MESSAGE_REPOSITORY')
+    private readonly messagesRepository: Repository<MessageEntity>,
     private readonly userService: UserService,
   ) {}
 
   async findAll(): Promise<ChatDto[]> {
-    return this.chatsRepository.find();
+    return this.chatsRepository.find({
+      relations: {
+        members: true,
+      },
+    });
   }
 
   async findByIdOrFail(chatId: number): Promise<ChatDto> {
@@ -32,10 +39,15 @@ export class ChatService {
   async create(params: CreateChatInput): Promise<ChatDto> {
     const { userIds, title, type } = params;
 
+    const matchUserCountInPrivateChat = 2;
+
     // TODO various error handling
-    if (type === ChatType.PRIVATE && userIds.length > 1) {
+    if (
+      type === ChatType.PRIVATE &&
+      userIds.length > matchUserCountInPrivateChat
+    ) {
       throw new NotAcceptableException(
-        "Can't create private chat with more than one user",
+        "Can't create private chat with more than two users",
       );
     }
 
@@ -56,5 +68,62 @@ export class ChatService {
     });
 
     return true;
+  }
+
+  async addMembers(chatId: number, userIds: number[]): Promise<boolean> {
+    const chat = await this.chatsRepository.findOne({
+      where: {
+        id: chatId,
+      },
+      relations: {
+        members: true,
+      },
+    });
+
+    if (chat.type === ChatType.PRIVATE) {
+      throw new NotAcceptableException("Can't add members to private chat");
+    }
+
+    const newMembers = await this.userService.findByUserIds(userIds);
+
+    const updatedMembers = [...chat.members, ...newMembers];
+
+    await this.chatsRepository.update(chatId, {
+      id: chatId,
+      members: updatedMembers,
+    });
+
+    return true;
+  }
+
+  async addMessage(
+    senderId: number,
+    chatId: number,
+    text: string,
+  ): Promise<boolean> {
+    await this.messagesRepository.insert({
+      chat: {
+        id: chatId,
+      },
+      sender: {
+        id: senderId,
+      },
+      text,
+    });
+
+    return true;
+  }
+
+  async messages(chatId: number): Promise<MessageDto[]> {
+    return this.messagesRepository.find({
+      where: {
+        chat: {
+          id: chatId,
+        },
+      },
+      relations: {
+        sender: true,
+      },
+    });
   }
 }
