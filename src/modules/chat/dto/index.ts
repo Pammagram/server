@@ -7,3 +7,4 @@ export * from './addMembers';
 export * from './addMessage';
 export * from './messages';
 export * from './message.dto';
+export * from './messageAdded';

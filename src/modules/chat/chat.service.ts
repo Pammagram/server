@@ -100,8 +100,8 @@ export class ChatService {
     senderId: number,
     chatId: number,
     text: string,
-  ): Promise<boolean> {
-    await this.messagesRepository.insert({
+  ): Promise<MessageDto> {
+    const data = await this.messagesRepository.insert({
       chat: {
         id: chatId,
       },
@@ -111,7 +111,11 @@ export class ChatService {
       text,
     });
 
-    return true;
+    const insertedId = data.identifiers[0].id as number;
+
+    const newMessage = await this.findMessageByIdOrFail(insertedId);
+
+    return newMessage;
   }
 
   async messages(chatId: number): Promise<MessageDto[]> {
@@ -124,6 +128,12 @@ export class ChatService {
       relations: {
         sender: true,
       },
+    });
+  }
+
+  async findMessageByIdOrFail(messageId: number): Promise<MessageDto> {
+    return this.messagesRepository.findOneByOrFail({
+      id: messageId,
     });
   }
 }

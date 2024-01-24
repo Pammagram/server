@@ -1,4 +1,5 @@
-import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
 
 import { ChatService } from './chat.service';
 import {
@@ -12,6 +13,7 @@ import {
   ChatsOutput,
   CreateChatInput,
   CreateChatOutput,
+  MessageAddedOutput,
   MessagesInput,
   MessagesOutput,
   RemoveChatInput,
@@ -22,12 +24,20 @@ import { SessionId } from '../auth/auth.decorators';
 import { Input } from '../common/decorators';
 import { SessionService } from '../session/session.service';
 
+const pubSub = new PubSub();
+const MESSAGE_ADDED = 'messageAdded';
+
 @Resolver()
 export class ChatResolver {
   constructor(
     private readonly chatService: ChatService,
     private readonly sessionService: SessionService,
   ) {}
+
+  @Subscription(() => MessageAddedOutput)
+  messageAdded() {
+    return pubSub.asyncIterator(MESSAGE_ADDED);
+  }
 
   @Query(() => ChatsOutput)
   // TODO add filtering
@@ -82,13 +92,18 @@ export class ChatResolver {
     // eslint-disable-next-line @typescript-eslint/naming-convention -- we need to conform to conventions in resolvers
     const data = await this.chatService.addMessage(userId, chatId, text);
 
+    void pubSub.publish(MESSAGE_ADDED, {
+      [MESSAGE_ADDED]: {
+        data,
+      },
+    });
+
     return { data };
   }
 
   @Query(() => MessagesOutput)
   async messages(@Input() input: MessagesInput): Promise<MessagesOutput> {
     const { chatId } = input;
-    // eslint-disable-next-line @typescript-eslint/naming-convention -- we need to conform to conventions in resolvers
     const data = await this.chatService.messages(chatId);
 
     return { data };

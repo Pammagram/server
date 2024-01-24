@@ -10,6 +10,11 @@ import { RequestAndResponse } from '../common/decorators';
       driver: ApolloDriver,
       autoSchemaFile: true,
       context: (ctx: RequestAndResponse) => ctx,
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention -- library property
+        'subscriptions-transport-ws': true,
+      },
       playground: {
         settings: {
           // eslint-disable-next-line @typescript-eslint/naming-convention -- we don't need it here
