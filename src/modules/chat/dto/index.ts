@@ -8,3 +8,5 @@ export * from './addMessage';
 export * from './messages';
 export * from './message.dto';
 export * from './messageAdded';
+export * from './removeMember';
+export * from './editChat';

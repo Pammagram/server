@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import config, { configValidationSchema } from 'src/config';
 
-import { AppController } from './app.controller';
 import { AppResolver } from './app.resolver';
 import { AuthModule } from './modules/auth/auth.module';
 import { ChatModule } from './modules/chat/chat.module';
@@ -26,7 +25,6 @@ import { UserModule } from './modules/user/user.module';
     SessionModule,
     ChatModule,
   ],
-  controllers: [AppController],
   providers: [AppResolver],
 })
 export class AppModule {}

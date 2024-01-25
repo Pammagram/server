@@ -8,7 +8,7 @@ export class CreateChatInput {
   title: string;
 
   @Field(() => [Int])
-  userIds: number[];
+  memberIds: number[];
 
   @Field(() => ChatType)
   type: ChatType;

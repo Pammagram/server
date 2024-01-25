@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { ChatDto, CreateChatInput, MessageDto } from './dto';
+import { ChatDto, CreateChatInput, EditChatInput, MessageDto } from './dto';
 import { ChatEntity, ChatType } from './entities';
 import { MessageEntity } from './entities/message.entity';
 
@@ -37,21 +37,21 @@ export class ChatService {
   }
 
   async create(params: CreateChatInput): Promise<ChatDto> {
-    const { userIds, title, type } = params;
+    const { memberIds, title, type } = params;
 
     const matchUserCountInPrivateChat = 2;
 
     // TODO various error handling
     if (
       type === ChatType.PRIVATE &&
-      userIds.length > matchUserCountInPrivateChat
+      memberIds.length > matchUserCountInPrivateChat
     ) {
       throw new NotAcceptableException(
         "Can't create private chat with more than two users",
       );
     }
 
-    const users = await this.userService.findByUserIds(userIds);
+    const users = await this.userService.findByUserIds(memberIds);
 
     const chat = await this.chatsRepository.save({
       title,
@@ -60,6 +60,18 @@ export class ChatService {
     });
 
     return chat;
+  }
+
+  async edit(params: EditChatInput): Promise<ChatDto> {
+    const { chatId, title } = params;
+
+    await this.chatsRepository.update(chatId, {
+      title,
+    });
+
+    const updatedChat = await this.findByIdOrFail(chatId);
+
+    return updatedChat;
   }
 
   async removeById(chatId: number): Promise<boolean> {
@@ -87,6 +99,32 @@ export class ChatService {
     const newMembers = await this.userService.findByUserIds(userIds);
 
     const updatedMembers = [...chat.members, ...newMembers];
+
+    await this.chatsRepository.update(chatId, {
+      id: chatId,
+      members: updatedMembers,
+    });
+
+    return true;
+  }
+
+  async removeMember(chatId: number, memberId: number): Promise<boolean> {
+    const chat = await this.chatsRepository.findOne({
+      where: {
+        id: chatId,
+      },
+      relations: {
+        members: true,
+      },
+    });
+
+    if (chat.type === ChatType.PRIVATE) {
+      throw new NotAcceptableException("Can't remove member from private chat");
+    }
+
+    const updatedMembers = chat.members.filter(
+      (member) => member.id !== memberId,
+    );
 
     await this.chatsRepository.update(chatId, {
       id: chatId,
