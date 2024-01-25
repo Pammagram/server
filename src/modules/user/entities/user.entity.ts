@@ -20,7 +20,7 @@ export class UserEntity {
   lastActiveInMs: Date;
 
   @OneToMany(() => SessionEntity, (session) => session.user, {
-    onDelete: 'CASCADE',
+    cascade: true,
   })
   sessions: SessionEntity[];
 }
