@@ -13,25 +13,23 @@ import { UserService } from './user.service';
 import { SessionId } from '../auth/auth.decorators';
 import { AuthGuard } from '../auth/guards/auth';
 import { Input } from '../common/decorators';
-import { SessionService } from '../session/session.service';
 
 @UseGuards(AuthGuard)
 @Resolver()
 export class UserResolver {
-  constructor(
-    private readonly userService: UserService,
-    private readonly sessionService: SessionService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  // TODO add filtering
   @Query(() => [UserDto])
   async users(): Promise<UserDto[]> {
     return this.userService.findAll();
   }
 
-  // TODO user resolver
+  @UseGuards(AuthGuard)
+  @Query(() => UserDto)
+  async me(@SessionId() sessionId: string): Promise<UserDto> {
+    return this.userService.findUserBySessionIdOrFail(sessionId);
+  }
 
-  // TODO admins
   @Mutation(() => CreateUserOutput)
   async createUser(@Input() input: CreateUserInput): Promise<CreateUserOutput> {
     const data = await this.userService.createUser(input);
@@ -47,7 +45,7 @@ export class UserResolver {
     @Input() input: UpdateUserInput,
   ): Promise<CreateUserOutput> {
     const { id: userId } =
-      await this.sessionService.findUserBySessionIdOrFail(sessionId);
+      await this.userService.findUserBySessionIdOrFail(sessionId);
 
     await this.userService.updateByUserId(userId, input);
 

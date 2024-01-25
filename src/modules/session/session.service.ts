@@ -1,28 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
-// import { genSalt, hash } from 'bcrypt';
-// import { ConfigType } from 'src/config';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { SessionDto } from './dto';
 import { SessionEntity } from './entities';
 
-// import { Config } from '../common/decorators';
-import { UserDto } from '../user/dto';
 import { UserEntity } from '../user/entities';
 
 @Injectable()
 export class SessionService {
-  // private readonly config: ConfigType['auth'];
-
   constructor(
-    // @Config()
-    // configService: ConfigType,
     @Inject('SESSION_REPOSITORY')
     private sessionRepository: Repository<SessionEntity>,
-  ) {
-    // this.config = configService.auth;
-  }
+  ) {}
 
   async findByUserId(userId: number): Promise<SessionDto[]> {
     return this.sessionRepository.find({
@@ -43,11 +33,6 @@ export class SessionService {
     const { ip, userAgent, user } = data;
 
     const sessionId = uuid();
-
-    // const { saltRounds } = this.config;
-    // const salt = await genSalt(saltRounds);
-
-    // const sessionIdEncrypted = await hash(sessionId, salt);
 
     const sessionData = {
       sessionId,
@@ -70,11 +55,14 @@ export class SessionService {
       where: {
         sessionId,
       },
+      relations: {
+        user: true,
+      },
     });
   }
 
-  async findUserBySessionIdOrFail(sessionId: string): Promise<UserDto | null> {
-    const { user } = await this.sessionRepository.findOneOrFail({
+  findBySessionIdOrFail(sessionId: string): Promise<SessionEntity> {
+    return this.sessionRepository.findOneOrFail({
       where: {
         sessionId,
       },
@@ -82,8 +70,6 @@ export class SessionService {
         user: true,
       },
     });
-
-    return user;
   }
 
   async updateBySessionId(

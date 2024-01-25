@@ -1,4 +1,3 @@
-// import { NotFoundException } from '@nestjs/common';
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
@@ -13,13 +12,7 @@ import { SendSmsInput, SendSmsOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
 import { AuthGuard } from './guards';
 
-import {
-  Input,
-  Ip,
-  Request,
-  Response,
-  SignedCookies,
-} from '../common/decorators';
+import { Input, Ip, Request, Response } from '../common/decorators';
 import { MessagingService } from '../messaging/messaging.service';
 import { SessionService } from '../session/session.service';
 import { UserDto } from '../user/dto';
@@ -37,7 +30,7 @@ export class AuthResolver {
   @UseGuards(AuthGuard)
   @Query(() => UserDto)
   async me(@SessionId() sessionId: string): Promise<UserDto> {
-    return this.sessionService.findUserBySessionIdOrFail(sessionId);
+    return this.userService.findUserBySessionIdOrFail(sessionId);
   }
 
   @Mutation(() => SendSmsOutput)
@@ -93,7 +86,7 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   async logout(
     @Response() response: ExpressResponse,
-    @SignedCookies(SESSION_ID) sessionId: string,
+    @SessionId() sessionId: string,
   ): Promise<boolean> {
     await this.sessionService.removeBySessionId(sessionId);
 

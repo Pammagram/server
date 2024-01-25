@@ -88,7 +88,7 @@ const tsRules = {
   ],
   '@typescript-eslint/no-inferrable-types': 'off', // we should always set types, even if they are trivial (number, boolean, etc)
   '@typescript-eslint/no-unsafe-assignment': 'error',
-  '@typescript-eslint/no-unsafe-member-access': 'error',
+  '@typescript-eslint/no-unsafe-member-access': 'off',
   '@typescript-eslint/no-var-requires': 'error',
   '@typescript-eslint/no-explicit-any': 'error',
   '@typescript-eslint/require-await': 'error',

@@ -1,18 +1,29 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { CreateUserInput, UserDto } from './dto';
 import { UserEntity } from './entities';
+
+import { SessionService } from '../session/session.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('USER_REPOSITORY')
     private readonly usersRepository: Repository<UserEntity>,
+    private readonly sessionService: SessionService,
   ) {}
 
   findAll(): Promise<UserEntity[]> {
     return this.usersRepository.find();
+  }
+
+  findByUserIds(userIds: number[]): Promise<UserEntity[]> {
+    return this.usersRepository.find({
+      where: {
+        id: In(userIds),
+      },
+    });
   }
 
   findByUserIdOrFail(userId: number): Promise<UserEntity> {
@@ -29,17 +40,6 @@ export class UserService {
         phoneNumber,
       },
     });
-  }
-
-  strictFindBySessionId(_sessionId: string): Promise<UserDto> {
-    // TODO implement when merged with session relations
-
-    throw new Error();
-    // return this.usersRepository.findOne({
-    //   where: {
-    //     phoneNumber,
-    //   },
-    // });
   }
 
   async strictFindByPhoneNumber(phoneNumber: string): Promise<UserDto> {
@@ -62,11 +62,9 @@ export class UserService {
     return true;
   }
 
-  // async getUserBySessionId(sessionId: string): Promise<User> {
-  //   const session = await this.sessionsRepository.findOne({
-  //     where: {
-  //       sessionId,
-  //     },
-  //   });
-  // }
+  async findUserBySessionIdOrFail(sessionId: string): Promise<UserDto> {
+    const { user } = await this.sessionService.findBySessionId(sessionId);
+
+    return user;
+  }
 }

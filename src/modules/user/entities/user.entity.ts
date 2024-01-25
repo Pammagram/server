@@ -1,5 +1,12 @@
+import { ChatEntity } from 'src/modules/chat/entities';
 import { SessionEntity } from 'src/modules/session/entities';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class UserEntity {
@@ -11,7 +18,9 @@ export class UserEntity {
 
   // TODO first name last name
 
-  @Column('text')
+  @Column('text', {
+    unique: true,
+  })
   phoneNumber: string;
 
   @Column('timestamp', {
@@ -23,6 +32,9 @@ export class UserEntity {
     cascade: true,
   })
   sessions: SessionEntity[];
+
+  @ManyToMany(() => ChatEntity)
+  chats: ChatEntity[];
 }
 
 export type User = UserEntity;
