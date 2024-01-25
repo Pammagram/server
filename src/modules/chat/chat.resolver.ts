@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 
@@ -21,8 +22,9 @@ import {
 } from './dto';
 
 import { SessionId } from '../auth/auth.decorators';
-import { Input } from '../common/decorators';
-import { SessionService } from '../session/session.service';
+import { AuthGuard } from '../auth/guards';
+import { GqlContext, Input } from '../common/decorators';
+import { UserService } from '../user/user.service';
 
 const pubSub = new PubSub();
 const MESSAGE_ADDED = 'messageAdded';
@@ -31,10 +33,33 @@ const MESSAGE_ADDED = 'messageAdded';
 export class ChatResolver {
   constructor(
     private readonly chatService: ChatService,
-    private readonly sessionService: SessionService,
+    private readonly useService: UserService,
   ) {}
 
-  @Subscription(() => MessageAddedOutput)
+  @UseGuards(AuthGuard)
+  @Subscription(() => MessageAddedOutput, {
+    filter: (
+      payload: { [MESSAGE_ADDED]: MessageAddedOutput },
+      _variables,
+      context: GqlContext,
+    ) => {
+      const {
+        messageAdded: { data },
+      } = payload;
+
+      const {
+        chat: { members },
+      } = data;
+
+      const userId = context.session.user.id;
+
+      if (members.some((member) => member.id === userId)) {
+        return true;
+      }
+
+      return false;
+    },
+  })
   messageAdded() {
     return pubSub.asyncIterator(MESSAGE_ADDED);
   }
@@ -86,11 +111,10 @@ export class ChatResolver {
   ): Promise<AddMessageOutput> {
     const { chatId, text } = input;
 
-    const { id: userId } =
-      await this.sessionService.findUserBySessionIdOrFail(sessionId);
+    const user = await this.useService.findUserBySessionIdOrFail(sessionId);
 
     // eslint-disable-next-line @typescript-eslint/naming-convention -- we need to conform to conventions in resolvers
-    const data = await this.chatService.addMessage(userId, chatId, text);
+    const data = await this.chatService.addMessage(user.id, chatId, text);
 
     void pubSub.publish(MESSAGE_ADDED, {
       [MESSAGE_ADDED]: {

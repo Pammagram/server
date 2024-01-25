@@ -4,11 +4,14 @@ import { In, Repository } from 'typeorm';
 import { CreateUserInput, UserDto } from './dto';
 import { UserEntity } from './entities';
 
+import { SessionService } from '../session/session.service';
+
 @Injectable()
 export class UserService {
   constructor(
     @Inject('USER_REPOSITORY')
     private readonly usersRepository: Repository<UserEntity>,
+    private readonly sessionService: SessionService,
   ) {}
 
   findAll(): Promise<UserEntity[]> {
@@ -59,11 +62,9 @@ export class UserService {
     return true;
   }
 
-  // async getUserBySessionId(sessionId: string): Promise<User> {
-  //   const session = await this.sessionsRepository.findOne({
-  //     where: {
-  //       sessionId,
-  //     },
-  //   });
-  // }
+  async findUserBySessionIdOrFail(sessionId: string): Promise<UserDto> {
+    const { user } = await this.sessionService.findBySessionId(sessionId);
+
+    return user;
+  }
 }

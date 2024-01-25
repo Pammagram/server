@@ -132,8 +132,14 @@ export class ChatService {
   }
 
   async findMessageByIdOrFail(messageId: number): Promise<MessageDto> {
-    return this.messagesRepository.findOneByOrFail({
-      id: messageId,
+    return this.messagesRepository.findOneOrFail({
+      where: { id: messageId },
+      relations: {
+        chat: {
+          members: true,
+        },
+        sender: true,
+      },
     });
   }
 }

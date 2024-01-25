@@ -47,7 +47,7 @@ export class UserResolver {
     @Input() input: UpdateUserInput,
   ): Promise<CreateUserOutput> {
     const { id: userId } =
-      await this.sessionService.findUserBySessionIdOrFail(sessionId);
+      await this.userService.findUserBySessionIdOrFail(sessionId);
 
     await this.userService.updateByUserId(userId, input);
 
