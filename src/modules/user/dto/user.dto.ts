@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { ChatDto } from 'src/modules/chat/dto';
 import { SessionDto } from 'src/modules/session/dto';
 
 import { User } from '../entities';
@@ -17,6 +18,7 @@ export class UserDto implements User {
   @Field(() => Date)
   lastActiveInMs: Date;
 
-  @Field(() => [SessionDto])
   sessions: SessionDto[];
+
+  chats: ChatDto[];
 }

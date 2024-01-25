@@ -20,6 +20,7 @@ export class AuthService {
       user = await this.userService.createUser({
         phoneNumber,
         username: null,
+        chats: [],
       });
     }
 
