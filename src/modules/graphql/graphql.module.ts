@@ -17,6 +17,7 @@ import { SessionService } from '../session/session.service';
         // configService: ConfigType, // TODO check if needed to disable playground on prod
       ): ApolloDriverConfig => ({
         autoSchemaFile: true,
+        allowBatchedHttpRequests: true,
         context: async (ctx: GqlContext) => {
           if (SESSION_ID in ctx.req.signedCookies) {
             const session = await sessionService.findBySessionIdOrFail(
