@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
 
     const sessionId =
       (ctx?.req?.signedCookies?.[SESSION_ID] as string) ??
-      ctx.session.sessionId;
+      ctx?.session?.sessionId;
 
     if (!sessionId) {
       console.debug('Session id is not found');
