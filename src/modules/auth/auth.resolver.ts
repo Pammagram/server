@@ -4,6 +4,7 @@ import {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from 'express';
+import { ConfigType } from 'src/config';
 
 import { SESSION_ID } from './auth.constants';
 import { SessionId } from './auth.decorators';
@@ -12,7 +13,7 @@ import { SendSmsInput, SendSmsOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
 import { AuthGuard } from './guards';
 
-import { Input, Ip, Request, Response } from '../common/decorators';
+import { Config, Input, Ip, Request, Response } from '../common/decorators';
 import { MessagingService } from '../messaging/messaging.service';
 import { SessionService } from '../session/session.service';
 import { UserDto } from '../user/dto';
@@ -25,6 +26,7 @@ export class AuthResolver {
     private readonly userService: UserService,
     private readonly sessionService: SessionService,
     private readonly messagingService: MessagingService,
+    @Config() private readonly configService: ConfigType,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -73,7 +75,7 @@ export class AuthResolver {
 
     response.cookie(SESSION_ID, sessionId, {
       httpOnly: true,
-      secure: true,
+      secure: this.configService.app.isProduction,
       signed: true,
     });
 
