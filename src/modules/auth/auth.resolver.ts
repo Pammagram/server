@@ -85,15 +85,17 @@ export class AuthResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(() => Boolean)
+  @Mutation(() => LogoutOutput)
   async logout(
     @Response() response: ExpressResponse,
     @SessionId() sessionId: string,
-  ): Promise<boolean> {
+  ): Promise<LogoutOutput> {
     await this.sessionService.removeBySessionId(sessionId);
 
     response.cookie(SESSION_ID, null);
 
-    return true;
+    return {
+      data: true,
+    };
   }
 }
