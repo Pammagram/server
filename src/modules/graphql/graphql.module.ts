@@ -19,10 +19,14 @@ import { SessionService } from '../session/session.service';
         autoSchemaFile: true,
         allowBatchedHttpRequests: true,
         context: async (ctx: GqlContext) => {
+          if (!ctx.req?.signedCookies) {
+            return ctx;
+          }
+
           if (SESSION_ID in ctx.req.signedCookies) {
             const session = await sessionService.findBySessionIdOrFail(
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- we are sure it's in there
-              ctx.req.signedCookies[SESSION_ID] as string,
+              ctx.req?.signedCookies[SESSION_ID] as string,
             );
 
             return {
@@ -52,6 +56,8 @@ import { SessionService } from '../session/session.service';
               };
             },
           },
+          // eslint-disable-next-line @typescript-eslint/naming-convention -- don't need
+          'graphql-ws': true,
         },
         playground: {
           settings: {

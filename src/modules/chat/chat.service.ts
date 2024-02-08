@@ -165,6 +165,7 @@ export class ChatService {
       },
       relations: {
         sender: true,
+        chat: true,
       },
     });
   }
