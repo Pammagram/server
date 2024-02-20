@@ -1,5 +1,12 @@
 import { User, UserEntity } from 'src/modules/user/entities';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { ChatEntity } from './chat.entity';
 
@@ -19,6 +26,12 @@ export class MessageEntity implements Message {
 
   @Column('text')
   text: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(() => UserEntity, {
     onDelete: 'CASCADE',

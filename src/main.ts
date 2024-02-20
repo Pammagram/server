@@ -11,7 +11,6 @@ async function bootstrap() {
   const { cookieSecret } = config.security;
 
   app.use(cookieParser(cookieSecret));
-
   const { port } = config.app;
 
   app.enableCors({

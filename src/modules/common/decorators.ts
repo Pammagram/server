@@ -11,6 +11,12 @@ import { SessionDto } from '../session/dto';
 export type GqlContext = {
   req: ExpressRequest;
   res: ExpressResponse;
+  // ! IMPORTANT
+  // * Duplication persists here because of different protocols in graphql-ws and graphql-transport-ws,
+  // * graphql-ws passes context via extra
+  extra?: {
+    session?: SessionDto;
+  };
   session?: SessionDto;
 };
 

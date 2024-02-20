@@ -1,7 +1,9 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { CONFIG_PROVIDER } from 'src/config';
+import { parse } from 'cookie';
+import { signedCookie } from 'cookie-parser';
+import { CONFIG_PROVIDER, ConfigType } from 'src/config';
 
 import { SESSION_ID } from '../auth/auth.constants';
 import { GqlContext } from '../common/decorators';
@@ -14,7 +16,7 @@ import { SessionService } from '../session/session.service';
       inject: [SessionService, CONFIG_PROVIDER],
       useFactory: (
         sessionService: SessionService,
-        // configService: ConfigType, // TODO check if needed to disable playground on prod
+        configService: ConfigType,
       ): ApolloDriverConfig => ({
         autoSchemaFile: true,
         allowBatchedHttpRequests: true,
@@ -31,20 +33,23 @@ import { SessionService } from '../session/session.service';
 
             return {
               ...ctx,
-              session,
+              extra: {
+                session,
+              },
             };
           }
 
           return ctx;
         },
         subscriptions: {
+          // ! This is for playground
           // eslint-disable-next-line @typescript-eslint/naming-convention -- library property
           'subscriptions-transport-ws': {
             onConnect: async (ctx: { sessionId?: string }) => {
               const { sessionId } = ctx;
 
               if (!sessionId) {
-                return ctx;
+                throw new Error('No auth cookies found');
               }
 
               const session =
@@ -57,7 +62,31 @@ import { SessionService } from '../session/session.service';
             },
           },
           // eslint-disable-next-line @typescript-eslint/naming-convention -- don't need
-          'graphql-ws': true,
+          'graphql-ws': {
+            onConnect: async (ctx) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- workaround
+              const rawHeaders = (ctx.extra as any).request
+                .rawHeaders as string[];
+
+              const sessionIdEncrypted = parseCookie(rawHeaders, SESSION_ID);
+
+              const sessionId = signedCookie(
+                sessionIdEncrypted,
+                configService.security.cookieSecret,
+              );
+
+              if (!sessionId) {
+                return false;
+              }
+
+              const session =
+                await sessionService.findBySessionIdOrFail(sessionId);
+
+              Object.assign(ctx.extra, {
+                session,
+              });
+            },
+          },
         },
         playground: {
           settings: {
@@ -70,3 +99,13 @@ import { SessionService } from '../session/session.service';
   ],
 })
 export class GraphqlModule {}
+
+export const parseCookie = (headers: string[], cookieName: string) => {
+  const cookiesIndex = headers.findIndex((header) => header === 'Cookie') + 1;
+
+  const cookiesRaw = headers[cookiesIndex];
+
+  const cookies = parse(cookiesRaw);
+
+  return cookies[cookieName];
+};

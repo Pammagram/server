@@ -14,22 +14,28 @@ import { SessionId } from '../auth/auth.decorators';
 import { AuthGuard } from '../auth/guards/auth';
 import { Input } from '../common/decorators';
 
-@UseGuards(AuthGuard)
 @Resolver()
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(AuthGuard)
   @Query(() => [UserDto])
   async users(): Promise<UserDto[]> {
     return this.userService.findAll();
   }
 
-  @UseGuards(AuthGuard)
-  @Query(() => UserDto)
-  async me(@SessionId() sessionId: string): Promise<UserDto> {
-    return this.userService.findUserBySessionIdOrFail(sessionId);
+  @Query(() => UserDto, { nullable: true })
+  async me(@SessionId() sessionId: string): Promise<UserDto | null> {
+    if (!sessionId) {
+      return null;
+    }
+
+    const user = await this.userService.findUserBySessionId(sessionId);
+
+    return user;
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => CreateUserOutput)
   async createUser(@Input() input: CreateUserInput): Promise<CreateUserOutput> {
     const data = await this.userService.createUser(input);
@@ -39,13 +45,14 @@ export class UserResolver {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => UpdateUserOutput)
   async updateMe(
     @SessionId() sessionId: string,
     @Input() input: UpdateUserInput,
   ): Promise<CreateUserOutput> {
     const { id: userId } =
-      await this.userService.findUserBySessionIdOrFail(sessionId);
+      await this.userService.findUserBySessionId(sessionId);
 
     await this.userService.updateByUserId(userId, input);
 

@@ -16,6 +16,12 @@ export class MessageDto implements Message {
   @Field(() => UserDto)
   sender: UserDto;
 
+  @Field(() => Date)
+  createdAt: Date;
+
+  @Field(() => Date)
+  updatedAt: Date;
+
   @Field(() => ChatDto)
   chat: ChatDto;
 }
