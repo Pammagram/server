@@ -1,4 +1,6 @@
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Session } from 'src/modules/auth/auth.decorators';
+import { SessionDto } from 'src/modules/session/dto';
 
 import { Input } from '../../common/decorators';
 import { ChatService } from '../chat.service';
@@ -31,9 +33,20 @@ export class ChatResolver {
     return { data };
   }
 
+  @Query(() => ChatsOutput)
+  // TODO add filtering
+  async myChats(
+    @Input() _input: ChatsInput,
+    @Session() session: SessionDto,
+  ): Promise<ChatsOutput> {
+    const data = await this.chatService.findChatsByMemberId(session.user.id);
+
+    return { data };
+  }
+
   @Query(() => ChatOutput)
   async chat(@Input() input: ChatInput): Promise<ChatOutput> {
-    const data = await this.chatService.findByIdOrFail(input.id);
+    const data = await this.chatService.findById(input.id);
 
     return { data };
   }

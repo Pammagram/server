@@ -1,8 +1,9 @@
-import { Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UserDto } from '../user.dto';
 
+@ObjectType()
 export class MeOutput {
-  @Field(() => UserDto)
-  data: UserDto;
+  @Field(() => UserDto, { nullable: true })
+  data: UserDto | null;
 }

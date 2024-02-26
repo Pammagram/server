@@ -4,9 +4,10 @@ import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   CreateUserInput,
   CreateUserOutput,
+  MeOutput,
   UpdateUserInput,
   UpdateUserOutput,
-  UserDto,
+  UsersOutput,
 } from './dto';
 import { UserService } from './user.service';
 
@@ -19,20 +20,22 @@ export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(AuthGuard)
-  @Query(() => [UserDto])
-  async users(): Promise<UserDto[]> {
-    return this.userService.findAll();
+  @Query(() => UsersOutput)
+  async users(): Promise<UsersOutput> {
+    const data = await this.userService.findAll();
+
+    return { data };
   }
 
-  @Query(() => UserDto, { nullable: true })
-  async me(@SessionId() sessionId: string): Promise<UserDto | null> {
+  @Query(() => MeOutput, { nullable: true })
+  async me(@SessionId() sessionId: string): Promise<MeOutput> {
     if (!sessionId) {
       return null;
     }
 
-    const user = await this.userService.findUserBySessionId(sessionId);
+    const data = await this.userService.findUserBySessionId(sessionId);
 
-    return user;
+    return { data };
   }
 
   @UseGuards(AuthGuard)

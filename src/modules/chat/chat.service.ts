@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ChatDto, CreateChatInput, EditChatInput, MessageDto } from './dto';
 import { ChatEntity, ChatType } from './entities';
@@ -19,6 +19,39 @@ export class ChatService {
 
   async findAll(): Promise<ChatDto[]> {
     return this.chatsRepository.find({
+      relations: {
+        members: true,
+      },
+    });
+  }
+
+  async findChatsByMemberId(memberId: number): Promise<ChatDto[]> {
+    const memberChats = await this.chatsRepository.find({
+      where: {
+        members: {
+          id: In([memberId]),
+        },
+      },
+      relations: {
+        members: true,
+      },
+    });
+
+    return this.chatsRepository.find({
+      where: {
+        id: In(memberChats.map((chat) => chat.id)),
+      },
+      relations: {
+        members: true,
+      },
+    });
+  }
+
+  async findById(chatId: number): Promise<ChatDto | null> {
+    return this.chatsRepository.findOne({
+      where: {
+        id: chatId,
+      },
       relations: {
         members: true,
       },
@@ -69,7 +102,7 @@ export class ChatService {
       title,
     });
 
-    const updatedChat = await this.findByIdOrFail(chatId);
+    const updatedChat = await this.findById(chatId);
 
     return updatedChat;
   }

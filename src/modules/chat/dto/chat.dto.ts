@@ -11,7 +11,7 @@ export class ChatDto implements Chat {
   @Field(() => String)
   title: string;
 
-  @Field(() => String)
+  @Field(() => ChatType)
   type: ChatType;
 
   @Field(() => [UserDto])
