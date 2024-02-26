@@ -17,7 +17,6 @@ export type GqlContext = {
   extra?: {
     session?: SessionDto;
   };
-  session?: SessionDto;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- We don't know types beforehand

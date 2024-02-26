@@ -17,7 +17,8 @@ import {
   MessagesOutput,
 } from '../dto';
 
-const pubSub = new PubSub();
+// TODO sub module
+export const pubSub = new PubSub();
 
 @Resolver()
 export class MessageResolver {

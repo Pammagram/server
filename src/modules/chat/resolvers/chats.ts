@@ -1,12 +1,19 @@
-import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { Session } from 'src/modules/auth/auth.decorators';
+import { AuthGuard } from 'src/modules/auth/guards';
 import { SessionDto } from 'src/modules/session/dto';
 
-import { Input } from '../../common/decorators';
+import { pubSub } from './messages';
+
+import { GqlContext, Input } from '../../common/decorators';
 import { ChatService } from '../chat.service';
 import {
   AddMembersInput,
   AddMembersOutput,
+  CHAT_CREATED,
+  ChatCreatedOutput,
+  ChatCreatedPayload,
   ChatInput,
   ChatOutput,
   ChatsInput,
@@ -55,6 +62,12 @@ export class ChatResolver {
   async createChat(@Input() input: CreateChatInput): Promise<CreateChatOutput> {
     const data = await this.chatService.create(input);
 
+    void pubSub.publish(CHAT_CREATED, {
+      [CHAT_CREATED]: {
+        data,
+      },
+    });
+
     return { data };
   }
 
@@ -92,5 +105,28 @@ export class ChatResolver {
     const data = await this.chatService.removeMember(chatId, memberId);
 
     return { data };
+  }
+
+  @UseGuards(AuthGuard)
+  @Subscription(() => ChatCreatedOutput, {
+    filter: (payload: ChatCreatedPayload, _variables, context: GqlContext) => {
+      const {
+        chatCreated: { data },
+      } = payload;
+
+      const { members } = data;
+
+      // TODO functions getters
+      const userId = context.extra.session.user.id;
+
+      if (members.some((member) => member.id === userId)) {
+        return true;
+      }
+
+      return false;
+    },
+  })
+  chatCreated() {
+    return pubSub.asyncIterator(CHAT_CREATED);
   }
 }

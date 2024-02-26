@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
     context: ExecutionContext & { session?: SessionDto },
   ): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context).getContext<GqlContext>();
-    const session = ctx.session ?? ctx?.extra?.session;
+    const session = ctx?.extra?.session;
 
     if (!session) {
       throw new UnauthorizedException();

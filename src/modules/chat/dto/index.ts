@@ -10,3 +10,4 @@ export * from './message.dto';
 export * from './messageAdded';
 export * from './removeMember';
 export * from './editChat';
+export * from './chatCreated';

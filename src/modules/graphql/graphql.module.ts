@@ -57,7 +57,9 @@ import { SessionService } from '../session/session.service';
 
               return {
                 ...ctx,
-                session,
+                extra: {
+                  session,
+                },
               };
             },
           },
