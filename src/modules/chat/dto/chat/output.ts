@@ -4,6 +4,6 @@ import { ChatDto } from '../chat.dto';
 
 @ObjectType()
 export class ChatOutput {
-  @Field(() => ChatDto)
-  data: ChatDto;
+  @Field(() => ChatDto, { nullable: true })
+  data: ChatDto | null;
 }

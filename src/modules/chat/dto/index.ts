@@ -11,3 +11,4 @@ export * from './messageAdded';
 export * from './removeMember';
 export * from './editChat';
 export * from './chatCreated';
+export * from './chatRemoved';

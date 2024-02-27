@@ -12,10 +12,13 @@ import {
   AddMembersInput,
   AddMembersOutput,
   CHAT_CREATED,
+  CHAT_REMOVED,
   ChatCreatedOutput,
   ChatCreatedPayload,
   ChatInput,
   ChatOutput,
+  ChatRemovedOutput,
+  ChatRemovedPayload,
   ChatsInput,
   ChatsOutput,
   CreateChatInput,
@@ -84,6 +87,13 @@ export class ChatResolver {
     // eslint-disable-next-line @typescript-eslint/naming-convention -- we need to conform to conventions in resolvers
     const data = await this.chatService.removeById(input.chatId);
 
+    // TODO types
+    void pubSub.publish(CHAT_REMOVED, {
+      [CHAT_REMOVED]: {
+        data,
+      },
+    });
+
     return { data };
   }
 
@@ -128,5 +138,28 @@ export class ChatResolver {
   })
   chatCreated() {
     return pubSub.asyncIterator(CHAT_CREATED);
+  }
+
+  @UseGuards(AuthGuard)
+  @Subscription(() => ChatRemovedOutput, {
+    filter: (payload: ChatRemovedPayload, _variables, context: GqlContext) => {
+      const {
+        chatRemoved: { data },
+      } = payload;
+
+      const { members } = data;
+
+      // TODO functions getters
+      const userId = context.extra.session.user.id;
+
+      if (members.some((member) => member.id === userId)) {
+        return true;
+      }
+
+      return false;
+    },
+  })
+  chatRemoved() {
+    return pubSub.asyncIterator(CHAT_REMOVED);
   }
 }

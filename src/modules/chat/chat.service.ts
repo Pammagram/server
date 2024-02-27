@@ -107,12 +107,14 @@ export class ChatService {
     return updatedChat;
   }
 
-  async removeById(chatId: number): Promise<boolean> {
+  async removeById(chatId: number): Promise<ChatDto> {
+    const chat = await this.findByIdOrFail(chatId);
+
     await this.chatsRepository.delete({
       id: chatId,
     });
 
-    return true;
+    return chat;
   }
 
   async addMembers(chatId: number, userIds: number[]): Promise<boolean> {
