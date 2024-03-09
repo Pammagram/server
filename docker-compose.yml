@@ -1,5 +1,6 @@
+name: pammagram
 services:
-  database:
+  pammagram-database:
     restart: always
     build:
       context: .
@@ -13,7 +14,7 @@ services:
     ports:
       - 5432:5432
 
-  server:
+  pammagram-server:
     restart: always
     build:
       context: .
@@ -29,4 +30,4 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - database
+      - pammagram-database

@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -10,7 +11,7 @@ import { UserEntity } from '../user/entities';
 @Injectable()
 export class SessionService {
   constructor(
-    @Inject('SESSION_REPOSITORY')
+    @InjectRepository(SessionEntity)
     private sessionRepository: Repository<SessionEntity>,
   ) {}
 

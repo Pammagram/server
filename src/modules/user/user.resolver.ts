@@ -19,7 +19,7 @@ import { Input } from '../common/decorators';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Query(() => UsersOutput)
   async users(): Promise<UsersOutput> {
     const data = await this.userService.findAll();

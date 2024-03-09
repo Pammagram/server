@@ -1,4 +1,5 @@
-import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { ChatDto, CreateChatInput, EditChatInput, MessageDto } from './dto';
@@ -10,10 +11,10 @@ import { UserService } from '../user/user.service';
 @Injectable()
 export class ChatService {
   constructor(
-    @Inject('CHAT_REPOSITORY')
-    private readonly chatsRepository: Repository<ChatEntity>,
-    @Inject('MESSAGE_REPOSITORY')
-    private readonly messagesRepository: Repository<MessageEntity>,
+    @InjectRepository(ChatEntity)
+    private chatsRepository: Repository<ChatEntity>,
+    @InjectRepository(MessageEntity)
+    private messagesRepository: Repository<MessageEntity>,
     private readonly userService: UserService,
   ) {}
 
