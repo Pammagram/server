@@ -18,7 +18,6 @@ import { MessagingService } from '../messaging/messaging.service';
 import { SessionService } from '../session/session.service';
 import { UserService } from '../user/user.service';
 
-@UseGuards(AuthGuard)
 @Resolver()
 export class AuthResolver {
   constructor(
@@ -81,6 +80,7 @@ export class AuthResolver {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => LogoutOutput)
   async logout(
     @Response() response: ExpressResponse,
