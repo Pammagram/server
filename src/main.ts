@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
+import { CONFIG_PROVIDER, ConfigType } from 'config';
 import * as cookieParser from 'cookie-parser';
-import { CONFIG_PROVIDER, ConfigType } from 'src/config';
 
 import { AppModule } from './app.module';
 

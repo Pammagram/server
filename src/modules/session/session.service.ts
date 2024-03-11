@@ -26,12 +26,12 @@ export class SessionService {
   }
 
   async createSession(
-    data: Pick<SessionDto, 'ip' | 'userAgent'> & {
+    data: Pick<SessionDto, 'ip' | 'device'> & {
       user: UserEntity;
       rememberMe?: boolean;
     },
   ): Promise<SessionEntity> {
-    const { ip, userAgent, user } = data;
+    const { ip, device, user } = data;
 
     const sessionId = uuid();
 
@@ -39,7 +39,7 @@ export class SessionService {
       sessionId,
       user,
       ip,
-      userAgent,
+      device,
     } satisfies Partial<SessionDto>;
 
     return this.sessionRepository.save(sessionData);
@@ -62,7 +62,7 @@ export class SessionService {
     });
   }
 
-  findBySessionIdOrFail(sessionId: string): Promise<SessionEntity> {
+  findBySessionByIdOrFail(sessionId: string): Promise<SessionEntity> {
     return this.sessionRepository.findOneOrFail({
       where: {
         sessionId,
@@ -71,6 +71,21 @@ export class SessionService {
         user: true,
       },
     });
+  }
+
+  async findSessionBySessionIdOrFailAndUpdate(
+    sessionId: string,
+  ): Promise<SessionEntity> {
+    await this.sessionRepository.update(
+      {
+        sessionId,
+      },
+      {
+        lastVisitInMs: new Date(),
+      },
+    );
+
+    return this.findBySessionByIdOrFail(sessionId);
   }
 
   async updateBySessionId(

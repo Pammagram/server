@@ -1,7 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { UserDto } from 'src/modules/user/dto/user.dto';
 
 import { Session } from '../entities';
+
+import { UserDto } from '$modules/user/dto/user.dto';
 
 @ObjectType()
 export class SessionDto implements Session {
@@ -12,7 +13,7 @@ export class SessionDto implements Session {
   ip: string;
 
   @Field(() => String)
-  userAgent: string;
+  device: string;
 
   @Field(() => Date)
   lastVisitInMs: Date;
@@ -20,6 +21,6 @@ export class SessionDto implements Session {
   // ! We should not give user access to sessionId because it's not safe
   sessionId: string;
 
-  @Field(() => UserDto)
+  // @Field(() => UserDto)
   user: UserDto;
 }

@@ -4,9 +4,10 @@ import {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from 'express';
-import { CONFIG_PROVIDER } from 'src/config';
 
 import { SessionDto } from '../session/dto';
+
+import { CONFIG_PROVIDER } from '$config';
 
 export type GqlContext = {
   req: ExpressRequest;

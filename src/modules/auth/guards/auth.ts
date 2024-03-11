@@ -5,9 +5,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { GqlContext } from 'src/modules/common/decorators';
-import { SessionDto } from 'src/modules/session/dto';
-import { SessionService } from 'src/modules/session/session.service';
+
+import { GqlContext } from '$modules/common/decorators';
+import { SessionDto } from '$modules/session/dto';
+import { SessionService } from '$modules/session/session.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

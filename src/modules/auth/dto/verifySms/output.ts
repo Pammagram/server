@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { UserDto } from 'src/modules/user/dto';
+
+import { UserDto } from '$modules/user/dto';
 
 @ObjectType()
 export class VerifySmsOutput {

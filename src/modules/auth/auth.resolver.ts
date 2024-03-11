@@ -1,10 +1,6 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
-import {
-  Request as ExpressRequest,
-  Response as ExpressResponse,
-} from 'express';
-import { ConfigType } from 'src/config';
+import { Response as ExpressResponse } from 'express';
 
 import { AUTH_COOKIE_LIFE_TIME, SESSION_ID } from './auth.constants';
 import { SessionId } from './auth.decorators';
@@ -13,10 +9,11 @@ import { LogoutOutput, SendSmsInput, SendSmsOutput } from './dto';
 import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
 import { AuthGuard } from './guards';
 
-import { Config, Input, Ip, Request, Response } from '../common/decorators';
-import { MessagingService } from '../messaging/messaging.service';
-import { SessionService } from '../session/session.service';
-import { UserService } from '../user/user.service';
+import { ConfigType } from '$config';
+import { Config, Input, Ip, Response } from '$modules/common/decorators';
+import { MessagingService } from '$modules/messaging/messaging.service';
+import { SessionService } from '$modules/session/session.service';
+import { UserService } from '$modules/user/user.service';
 
 @Resolver()
 export class AuthResolver {
@@ -41,10 +38,10 @@ export class AuthResolver {
   async verifySms(
     @Ip() ip: string,
     @Response() response: ExpressResponse,
-    @Request() request: ExpressRequest,
+    // @Request() request: ExpressRequest,
     @Input() input: VerifySmsInput,
   ): Promise<VerifySmsOutput> {
-    const { phoneNumber, code } = input;
+    const { phoneNumber, code, device } = input;
 
     // * Disable sending messages in dev mode
     if (!this.configService.app.isDevelopment) {
@@ -63,10 +60,9 @@ export class AuthResolver {
     const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
 
     const { sessionId } = await this.sessionService.createSession({
-      userAgent: request.headers['user-agent'],
+      device,
       ip,
       user,
-      rememberMe: input.rememberMe,
     });
 
     response.cookie(SESSION_ID, sessionId, {

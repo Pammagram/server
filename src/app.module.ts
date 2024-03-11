@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import config, { configValidationSchema } from 'src/config';
+import config, { configValidationSchema } from 'config';
 
 import { AppResolver } from './app.resolver';
 import { AuthModule } from './modules/auth/auth.module';

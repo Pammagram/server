@@ -1,8 +1,5 @@
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
-import { Session } from 'src/modules/auth/auth.decorators';
-import { AuthGuard } from 'src/modules/auth/guards';
-import { SessionDto } from 'src/modules/session/dto';
 
 import { pubSub } from './messages';
 
@@ -30,6 +27,10 @@ import {
   RemoveMemberInput,
   RemoveMemberOutput,
 } from '../dto';
+
+import { Session } from '$modules/auth/auth.decorators';
+import { AuthGuard } from '$modules/auth/guards';
+import { SessionDto } from '$modules/session/dto';
 
 @Resolver()
 export class ChatResolver {

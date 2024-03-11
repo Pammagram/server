@@ -1,5 +1,4 @@
 import { registerEnumType } from '@nestjs/graphql';
-import { UserEntity } from 'src/modules/user/entities';
 import {
   Column,
   Entity,
@@ -7,6 +6,8 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+import { UserEntity } from '$modules/user/entities';
 
 export enum ChatType {
   PRIVATE = 'private',

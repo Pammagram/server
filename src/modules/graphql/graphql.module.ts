@@ -3,11 +3,12 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { parse } from 'cookie';
 import { signedCookie } from 'cookie-parser';
-import { CONFIG_PROVIDER, ConfigType } from 'src/config';
 
 import { SESSION_ID } from '../auth/auth.constants';
 import { GqlContext } from '../common/decorators';
 import { SessionService } from '../session/session.service';
+
+import { CONFIG_PROVIDER, ConfigType } from '$config';
 
 @Module({
   imports: [
@@ -26,10 +27,11 @@ import { SessionService } from '../session/session.service';
           }
 
           if (SESSION_ID in ctx.req.signedCookies) {
-            const session = await sessionService.findBySessionIdOrFail(
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- we are sure it's in there
-              ctx.req?.signedCookies[SESSION_ID] as string,
-            );
+            const session =
+              await sessionService.findSessionBySessionIdOrFailAndUpdate(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- we are sure it's in there
+                ctx.req?.signedCookies[SESSION_ID] as string,
+              );
 
             return {
               ...ctx,
@@ -53,7 +55,9 @@ import { SessionService } from '../session/session.service';
               }
 
               const session =
-                await sessionService.findBySessionIdOrFail(sessionId);
+                await sessionService.findSessionBySessionIdOrFailAndUpdate(
+                  sessionId,
+                );
 
               return {
                 ...ctx,
@@ -82,7 +86,9 @@ import { SessionService } from '../session/session.service';
               }
 
               const session =
-                await sessionService.findBySessionIdOrFail(sessionId);
+                await sessionService.findSessionBySessionIdOrFailAndUpdate(
+                  sessionId,
+                );
 
               Object.assign(ctx.extra, {
                 session,

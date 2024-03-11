@@ -1,11 +1,12 @@
-import { UserEntity } from 'src/modules/user/entities';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+import { UserEntity } from '$modules/user/entities';
+
 export type Session = {
+  device: string;
   ip: string;
   lastVisitInMs: Date;
   sessionId: string;
-  userAgent: string;
 };
 
 @Entity()
@@ -17,7 +18,7 @@ export class SessionEntity implements Session {
   ip: string;
 
   @Column('text')
-  userAgent: string;
+  device: string;
 
   @Column('timestamp', {
     default: () => 'CURRENT_TIMESTAMP',

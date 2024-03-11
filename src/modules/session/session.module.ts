@@ -2,12 +2,13 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SessionEntity } from './entities';
+import { SessionResolver } from './resolver';
 import { SessionService } from './session.service';
 
 @Global()
 @Module({
   imports: [TypeOrmModule.forFeature([SessionEntity])],
-  providers: [SessionService],
+  providers: [SessionService, SessionResolver],
   exports: [SessionService],
 })
 export class SessionModule {}
