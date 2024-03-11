@@ -2,7 +2,7 @@ import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { Response as ExpressResponse } from 'express';
 
-import { AUTH_COOKIE_LIFE_TIME, SESSION_ID } from './constants';
+import { ONE_YEAR, SESSION_ID } from './constants';
 import {
   LogoutOutput,
   SendSmsInput,
@@ -74,7 +74,7 @@ export class AuthResolver {
       httpOnly: true,
       secure: this.configService.app.isProduction,
       signed: true,
-      expires: new Date(AUTH_COOKIE_LIFE_TIME),
+      expires: new Date(Date.now() + ONE_YEAR),
     });
 
     return {

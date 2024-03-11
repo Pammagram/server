@@ -22,7 +22,7 @@ import { CONFIG_PROVIDER, ConfigType } from '$config';
         autoSchemaFile: true,
         allowBatchedHttpRequests: true,
         context: async (ctx: GqlContext) => {
-          if (SESSION_ID in ctx.req.signedCookies) {
+          if (ctx.req.signedCookies && SESSION_ID in ctx.req.signedCookies) {
             const session =
               await sessionService.findSessionBySessionIdOrFailAndUpdate(
                 ctx.req?.signedCookies[SESSION_ID] as string,

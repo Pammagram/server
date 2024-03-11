@@ -44,6 +44,7 @@ export class ChatResolver {
     return { data };
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => ChatsOutput)
   // TODO add filtering
   async myChats(
