@@ -2,10 +2,6 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 
-import { AuthGuard } from '../../auth/guards';
-import { GqlContext, Input } from '../../common/decorators';
-import { SessionId } from '../../session/decorators/session';
-import { UserService } from '../../user/user.service';
 import { ChatService } from '../chat.service';
 import {
   AddMessageInput,
@@ -16,6 +12,11 @@ import {
   MessagesInput,
   MessagesOutput,
 } from '../dto';
+
+import { AuthGuard } from '$modules/auth';
+import { GqlContext, Input } from '$modules/common/decorators';
+import { SessionId } from '$modules/session';
+import { UserService } from '$modules/user/user.service';
 
 // TODO sub module
 export const pubSub = new PubSub();

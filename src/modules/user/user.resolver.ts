@@ -11,9 +11,9 @@ import {
 } from './dto';
 import { UserService } from './user.service';
 
-import { AuthGuard } from '$modules/auth/guards/auth';
+import { AuthGuard } from '$modules/auth';
 import { Input } from '$modules/common/decorators';
-import { SessionId } from '$modules/session/decorators';
+import { SessionId } from '$modules/session';
 
 @Resolver()
 export class UserResolver {

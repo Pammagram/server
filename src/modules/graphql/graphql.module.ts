@@ -4,11 +4,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { parse } from 'cookie';
 import { signedCookie } from 'cookie-parser';
 
-import { SESSION_ID } from '../auth/constants';
-import { GqlContext } from '../common/decorators';
-import { SessionService } from '../session/service';
-
 import { CONFIG_PROVIDER, ConfigType } from '$config';
+import { SESSION_ID } from '$modules/auth/constants';
+import { GqlContext } from '$modules/common/decorators';
+import { SessionService } from '$modules/session/service';
 
 @Module({
   imports: [

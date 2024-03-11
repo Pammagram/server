@@ -3,7 +3,6 @@ import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 
 import { pubSub } from './messages';
 
-import { GqlContext, Input } from '../../common/decorators';
 import { ChatService } from '../chat.service';
 import {
   AddMembersInput,
@@ -29,8 +28,8 @@ import {
 } from '../dto';
 
 import { AuthGuard } from '$modules/auth/guards';
-import { Session } from '$modules/session/decorators/session';
-import { SessionDto } from '$modules/session/dto';
+import { GqlContext, Input } from '$modules/common/decorators';
+import { Session, SessionDto } from '$modules/session';
 
 @Resolver()
 export class ChatResolver {

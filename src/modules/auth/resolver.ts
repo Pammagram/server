@@ -16,8 +16,7 @@ import { AuthService } from './service';
 import { ConfigType } from '$config';
 import { Config, Input, Ip, Response } from '$modules/common/decorators';
 import { MessagingService } from '$modules/messaging/messaging.service';
-import { SessionId } from '$modules/session/decorators';
-import { SessionService } from '$modules/session/service';
+import { SessionId, SessionService } from '$modules/session';
 import { UserService } from '$modules/user/user.service';
 
 @Resolver()

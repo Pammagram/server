@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { SESSION_ID } from '../../auth/constants';
-import { GqlContext, SignedCookies } from '../../common/decorators';
+import { SESSION_ID } from '$modules/auth/constants';
+import { GqlContext, SignedCookies } from '$modules/common/decorators';
 
 export const SessionId = SignedCookies.bind(
   SignedCookies,
