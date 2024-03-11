@@ -6,7 +6,7 @@ import {
 } from 'express';
 import { ConfigType } from 'src/config';
 
-import { SESSION_ID } from './auth.constants';
+import { AUTH_COOKIE_LIFE_TIME, SESSION_ID } from './auth.constants';
 import { SessionId } from './auth.decorators';
 import { AuthService } from './auth.service';
 import { LogoutOutput, SendSmsInput, SendSmsOutput } from './dto';
@@ -73,6 +73,7 @@ export class AuthResolver {
       httpOnly: true,
       secure: this.configService.app.isProduction,
       signed: true,
+      expires: new Date(AUTH_COOKIE_LIFE_TIME),
     });
 
     return {
