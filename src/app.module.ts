@@ -3,11 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import config, { configValidationSchema } from 'config';
 
 import { AppResolver } from './app.resolver';
-import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/auth/module';
 import { ChatModule } from './modules/chat/chat.module';
 import { DbModule } from './modules/db/db.module';
 import { GraphqlModule } from './modules/graphql/graphql.module';
-import { SessionModule } from './modules/session/session.module';
+import { SessionModule } from './modules/session/module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({

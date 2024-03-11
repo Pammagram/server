@@ -4,9 +4,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { parse } from 'cookie';
 import { signedCookie } from 'cookie-parser';
 
-import { SESSION_ID } from '../auth/auth.constants';
+import { SESSION_ID } from '../auth/constants';
 import { GqlContext } from '../common/decorators';
-import { SessionService } from '../session/session.service';
+import { SessionService } from '../session/service';
 
 import { CONFIG_PROVIDER, ConfigType } from '$config';
 
@@ -22,23 +22,17 @@ import { CONFIG_PROVIDER, ConfigType } from '$config';
         autoSchemaFile: true,
         allowBatchedHttpRequests: true,
         context: async (ctx: GqlContext) => {
-          if (!ctx.req?.signedCookies) {
-            return ctx;
-          }
-
           if (SESSION_ID in ctx.req.signedCookies) {
             const session =
               await sessionService.findSessionBySessionIdOrFailAndUpdate(
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- we are sure it's in there
                 ctx.req?.signedCookies[SESSION_ID] as string,
               );
 
-            return {
-              ...ctx,
+            Object.assign(ctx, {
               extra: {
                 session,
               },
-            };
+            });
           }
 
           return ctx;

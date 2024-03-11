@@ -2,9 +2,9 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 
-import { SessionId } from '../../auth/auth.decorators';
 import { AuthGuard } from '../../auth/guards';
 import { GqlContext, Input } from '../../common/decorators';
+import { SessionId } from '../../session/decorators/session';
 import { UserService } from '../../user/user.service';
 import { ChatService } from '../chat.service';
 import {

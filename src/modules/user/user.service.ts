@@ -5,7 +5,7 @@ import { In, Repository } from 'typeorm';
 import { CreateUserInput, UserDto } from './dto';
 import { UserEntity } from './entities';
 
-import { SessionService } from '../session/session.service';
+import { SessionService } from '../session/service';
 
 @Injectable()
 export class UserService {

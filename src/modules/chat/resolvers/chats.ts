@@ -28,8 +28,8 @@ import {
   RemoveMemberOutput,
 } from '../dto';
 
-import { Session } from '$modules/auth/auth.decorators';
 import { AuthGuard } from '$modules/auth/guards';
+import { Session } from '$modules/session/decorators/session';
 import { SessionDto } from '$modules/session/dto';
 
 @Resolver()

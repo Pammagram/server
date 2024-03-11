@@ -1,11 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { Session } from '../entities';
-
 import { UserDto } from '$modules/user/dto/user.dto';
 
 @ObjectType()
-export class SessionDto implements Session {
+export class SessionDto {
   @Field(() => Int)
   id: number;
 

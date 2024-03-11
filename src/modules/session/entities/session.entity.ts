@@ -2,15 +2,8 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UserEntity } from '$modules/user/entities';
 
-export type Session = {
-  device: string;
-  ip: string;
-  lastVisitInMs: Date;
-  sessionId: string;
-};
-
 @Entity()
-export class SessionEntity implements Session {
+export class SessionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

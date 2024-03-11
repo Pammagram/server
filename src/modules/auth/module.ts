@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 
-import { AuthResolver } from './auth.resolver';
-import { AuthService } from './auth.service';
+import { AuthResolver } from './resolver';
+import { AuthService } from './service';
 
 import { MessagingModule } from '../messaging/messaging.module';
 import { UserModule } from '../user/user.module';

@@ -2,17 +2,22 @@ import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { Response as ExpressResponse } from 'express';
 
-import { AUTH_COOKIE_LIFE_TIME, SESSION_ID } from './auth.constants';
-import { SessionId } from './auth.decorators';
-import { AuthService } from './auth.service';
-import { LogoutOutput, SendSmsInput, SendSmsOutput } from './dto';
-import { VerifySmsInput, VerifySmsOutput } from './dto/verifySms';
+import { AUTH_COOKIE_LIFE_TIME, SESSION_ID } from './constants';
+import {
+  LogoutOutput,
+  SendSmsInput,
+  SendSmsOutput,
+  VerifySmsInput,
+  VerifySmsOutput,
+} from './dto';
 import { AuthGuard } from './guards';
+import { AuthService } from './service';
 
 import { ConfigType } from '$config';
 import { Config, Input, Ip, Response } from '$modules/common/decorators';
 import { MessagingService } from '$modules/messaging/messaging.service';
-import { SessionService } from '$modules/session/session.service';
+import { SessionId } from '$modules/session/decorators';
+import { SessionService } from '$modules/session/service';
 import { UserService } from '$modules/user/user.service';
 
 @Resolver()

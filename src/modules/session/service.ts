@@ -25,6 +25,14 @@ export class SessionService {
     });
   }
 
+  async findByIdOrFail(id: number): Promise<SessionDto> {
+    return this.sessionRepository.findOneOrFail({
+      where: {
+        id,
+      },
+    });
+  }
+
   async createSession(
     data: Pick<SessionDto, 'ip' | 'device'> & {
       user: UserEntity;
@@ -49,6 +57,16 @@ export class SessionService {
     return this.sessionRepository.delete({
       sessionId,
     });
+  }
+
+  async removeById(id: number): Promise<SessionEntity> {
+    const sessionToDelete = await this.findByIdOrFail(id);
+
+    await this.sessionRepository.delete({
+      id,
+    });
+
+    return sessionToDelete;
   }
 
   findBySessionId(sessionId: string): Promise<SessionEntity | null> {

@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SessionEntity } from './entities';
 import { SessionResolver } from './resolver';
-import { SessionService } from './session.service';
+import { SessionService } from './service';
 
 @Global()
 @Module({
