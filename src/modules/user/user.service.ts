@@ -10,7 +10,7 @@ import { UserEntity } from './entities';
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private usersRepository: Repository<UserEntity>,
+    private readonly usersRepository: Repository<UserEntity>,
     private readonly sessionService: SessionService,
   ) {}
 

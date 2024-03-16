@@ -1,13 +1,15 @@
+import { MockedMessagingService } from '@modules/messaging/__mocks__/messaging.service';
+import { MockedUserService } from '@modules/user/__mocks__/service';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthService } from './service';
+import { AuthService } from '../service';
 
 describe('AuthService', () => {
   let service: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [AuthService, MockedUserService, MockedMessagingService],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
