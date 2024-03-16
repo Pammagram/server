@@ -1,3 +1,6 @@
+import { AuthGuard } from '@modules/auth/guards';
+import { GqlContext, Input } from '@modules/common/decorators';
+import { Session, SessionDto } from '@modules/session';
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 
@@ -26,10 +29,6 @@ import {
   RemoveMemberInput,
   RemoveMemberOutput,
 } from '../dto';
-
-import { AuthGuard } from '$modules/auth/guards';
-import { GqlContext, Input } from '$modules/common/decorators';
-import { Session, SessionDto } from '$modules/session';
 
 @Resolver()
 export class ChatResolver {

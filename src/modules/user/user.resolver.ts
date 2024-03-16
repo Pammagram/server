@@ -1,3 +1,6 @@
+import { AuthGuard } from '@modules/auth';
+import { Input } from '@modules/common/decorators';
+import { SessionId } from '@modules/session';
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 
@@ -10,10 +13,6 @@ import {
   UsersOutput,
 } from './dto';
 import { UserService } from './user.service';
-
-import { AuthGuard } from '$modules/auth';
-import { Input } from '$modules/common/decorators';
-import { SessionId } from '$modules/session';
 
 @Resolver()
 export class UserResolver {

@@ -18,9 +18,9 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "$modules": ["modules"],
-      "$modules/*": ["modules/*"],
-      "$config": ["config"],
+      "@modules": ["modules"],
+      "@modules/*": ["modules/*"],
+      "@config": ["config"],
     }
   }
 }

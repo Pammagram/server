@@ -1,3 +1,4 @@
+import { CONFIG_PROVIDER } from '@config';
 import { createParamDecorator, ExecutionContext, Inject } from '@nestjs/common';
 import { Args, GqlExecutionContext } from '@nestjs/graphql';
 import {
@@ -6,8 +7,6 @@ import {
 } from 'express';
 
 import { SessionDto } from '../session/dto';
-
-import { CONFIG_PROVIDER } from '$config';
 
 export type GqlContext = {
   req: ExpressRequest;

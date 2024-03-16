@@ -1,7 +1,6 @@
+import { CONFIG_PROVIDER, ConfigType } from '@config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-import { CONFIG_PROVIDER, ConfigType } from '$config';
 
 @Module({
   imports: [

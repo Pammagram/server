@@ -1,13 +1,12 @@
+import { CONFIG_PROVIDER, ConfigType } from '@config';
+import { SESSION_ID } from '@modules/auth/constants';
+import { GqlContext } from '@modules/common/decorators';
+import { SessionService } from '@modules/session/service';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { parse } from 'cookie';
 import { signedCookie } from 'cookie-parser';
-
-import { CONFIG_PROVIDER, ConfigType } from '$config';
-import { SESSION_ID } from '$modules/auth/constants';
-import { GqlContext } from '$modules/common/decorators';
-import { SessionService } from '$modules/session/service';
 
 @Module({
   imports: [
@@ -21,17 +20,27 @@ import { SessionService } from '$modules/session/service';
         autoSchemaFile: true,
         allowBatchedHttpRequests: true,
         context: async (ctx: GqlContext) => {
-          if (ctx.req.signedCookies && SESSION_ID in ctx.req.signedCookies) {
-            const session =
-              await sessionService.findSessionBySessionIdOrFailAndUpdate(
-                ctx.req?.signedCookies[SESSION_ID] as string,
-              );
+          if (!ctx.req?.signedCookies) {
+            return ctx;
+          }
 
-            Object.assign(ctx, {
-              extra: {
-                session,
-              },
-            });
+          if (SESSION_ID in ctx.req.signedCookies) {
+            try {
+              const session =
+                await sessionService.findSessionBySessionIdOrFailAndUpdate(
+                  ctx.req?.signedCookies[SESSION_ID] as string,
+                );
+
+              Object.assign(ctx, {
+                extra: {
+                  session,
+                },
+              });
+            } catch (error) {
+              ctx.res.cookie(SESSION_ID, null);
+
+              return ctx;
+            }
           }
 
           return ctx;

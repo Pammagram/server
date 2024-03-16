@@ -1,6 +1,5 @@
+import { UserEntity } from '@modules/user/entities';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
-import { UserEntity } from '$modules/user/entities';
 
 @Entity()
 export class SessionEntity {

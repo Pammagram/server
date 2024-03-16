@@ -1,3 +1,8 @@
+import { ConfigType } from '@config';
+import { Config, Input, Ip, Response } from '@modules/common/decorators';
+import { MessagingService } from '@modules/messaging/messaging.service';
+import { SessionId, SessionService } from '@modules/session';
+import { UserService } from '@modules/user/user.service';
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { Response as ExpressResponse } from 'express';
@@ -12,12 +17,6 @@ import {
 } from './dto';
 import { AuthGuard } from './guards';
 import { AuthService } from './service';
-
-import { ConfigType } from '$config';
-import { Config, Input, Ip, Response } from '$modules/common/decorators';
-import { MessagingService } from '$modules/messaging/messaging.service';
-import { SessionId, SessionService } from '$modules/session';
-import { UserService } from '$modules/user/user.service';
 
 @Resolver()
 export class AuthResolver {

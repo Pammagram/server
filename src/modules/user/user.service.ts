@@ -1,11 +1,10 @@
+import { SessionService } from '@modules/session/service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { CreateUserInput, UserDto } from './dto';
 import { UserEntity } from './entities';
-
-import { SessionService } from '$modules/session/service';
 
 @Injectable()
 export class UserService {

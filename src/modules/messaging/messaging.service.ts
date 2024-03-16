@@ -1,8 +1,7 @@
+import { ConfigType } from '@config';
+import { Config } from '@modules/common/decorators';
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { Twilio } from 'twilio';
-
-import { ConfigType } from '$config';
-import { Config } from '$modules/common/decorators';
 
 type SendVerificationCodeParams = {
   phoneNumber: string;

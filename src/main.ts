@@ -1,9 +1,8 @@
+import { CONFIG_PROVIDER, ConfigType } from '@config';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
-
-import { CONFIG_PROVIDER, ConfigType } from '$config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

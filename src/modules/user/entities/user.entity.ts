@@ -1,3 +1,5 @@
+import { ChatEntity } from '@modules/chat/entities';
+import { SessionEntity } from '@modules/session/entities';
 import {
   Column,
   Entity,
@@ -5,9 +7,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
-import { ChatEntity } from '$modules/chat/entities';
-import { SessionEntity } from '$modules/session/entities';
 
 @Entity()
 export class UserEntity {
