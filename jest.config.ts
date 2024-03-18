@@ -13,6 +13,7 @@ const jestConfig: JestConfigWithTsJest = {
   moduleNameMapper: {
     '^@modules(.*)': '<rootDir>/src/modules$1',
     '^@config': '<rootDir>/src/config/index.ts',
+    '^@core(.*)': '<rootDir>/src/core$1',
   },
 };
 

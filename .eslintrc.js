@@ -47,6 +47,7 @@ const initialRules = {
       allow: ['constructors'],
     },
   ],
+  '@typescript-eslint/no-unnecessary-type-assertion': 'off',
   'no-dupe-keys': 'error',
   'no-console': ['error', { allow: ['warn', 'error', 'debug'] }],
   'no-underscore-dangle': ['off'], // we regulate an use of an underscore by other rules

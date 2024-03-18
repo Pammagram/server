@@ -9,7 +9,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AppResolver } from './app.resolver';
-import { DummyModule } from './modules/dummy/dummy.module';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { DummyModule } from './modules/dummy/dummy.module';
     AuthModule,
     SessionModule,
     ChatModule,
-    DummyModule,
   ],
   providers: [AppResolver],
 })

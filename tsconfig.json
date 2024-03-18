@@ -21,6 +21,8 @@
       "@modules": ["modules"],
       "@modules/*": ["modules/*"],
       "@config": ["config"],
+      "@core": ["core"],
+      "@core/*": ["core/*"],
     }
   }
 }
