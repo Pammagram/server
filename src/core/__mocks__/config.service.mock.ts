@@ -1,12 +1,12 @@
 import { CONFIG_PROVIDER } from '@config';
+import { PublicInterface } from '@core/types';
 import { Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-// @ts-expect-error -- ts expects private fields to be defined
-class MockedConfigServiceClass implements ConfigService {
-  get = (_key) => '';
+class MockedConfigServiceClass implements PublicInterface<ConfigService> {
+  get = jest.fn();
 
-  getOrThrow = (_key) => '';
+  getOrThrow = jest.fn();
 }
 
 export const MockedConfigService: Provider = {

@@ -41,23 +41,19 @@ export class AuthResolver {
   async verifySms(
     @Ip() ip: string,
     @Response() response: ExpressResponse,
-    // @Request() request: ExpressRequest,
     @Input() input: VerifySmsInput,
   ): Promise<VerifySmsOutput> {
     const { phoneNumber, code, device } = input;
 
-    // * Disable sending messages in dev mode
-    if (!this.configService.app.isDevelopment) {
-      try {
-        await this.messagingService.validateVerificationCode({
-          phoneNumber,
-          code,
-        });
-      } catch (error) {
-        throw new NotFoundException(
-          'Verification code not found. Try sending sms again',
-        );
-      }
+    try {
+      await this.messagingService.validateVerificationCode({
+        phoneNumber,
+        code,
+      });
+    } catch (error) {
+      throw new NotFoundException(
+        'Verification code not found. Try sending sms again',
+      );
     }
 
     const user = await this.userService.strictFindByPhoneNumber(phoneNumber);

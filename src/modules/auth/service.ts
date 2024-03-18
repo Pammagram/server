@@ -24,7 +24,7 @@ export class AuthService {
       });
     }
 
-    // await this.messagingService.sendVerificationCode({ phoneNumber });
+    await this.messagingService.sendVerificationCode({ phoneNumber });
 
     return true;
   }
