@@ -62,5 +62,7 @@ describe('AuthResolver', () => {
 
       expect(cookieService.setCookie).toHaveBeenCalled();
     });
+
+    // TODO check that cookie service gets SESSION_ID constant
   });
 });
