@@ -15,7 +15,6 @@ export class AuthService {
     let user = await this.userService.findByPhoneNumber(phoneNumber);
 
     if (!user) {
-      console.debug('User does not exist, creating...');
       // ? TODO we can utilize redis and store temp user there with TMP
       user = await this.userService.createUser({
         phoneNumber,

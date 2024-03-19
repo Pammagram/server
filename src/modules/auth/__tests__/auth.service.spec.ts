@@ -1,40 +1,62 @@
-import {
-  MockedMessagingService,
-  MockedMessagingServiceClass,
-} from '@modules/messaging/__mocks__/messaging.service.mock';
+import { MockedMessagingServiceClass } from '@modules/messaging/__mocks__/messaging.service.mock';
 import { MessagingService } from '@modules/messaging/messaging.service';
-import { MockedUserService } from '@modules/user/__mocks__/service';
-import { Test, TestingModule } from '@nestjs/testing';
+import { MockedUserServiceClass } from '@modules/user/__mocks__/user.service.mock';
+import { UserService } from '@modules/user/user.service';
+import { TestingModule } from '@nestjs/testing';
 
-import { AuthService } from '../service';
+import { initAuthServiceTestModule } from './utils';
+
+import { AuthService } from '../auth.service';
 
 describe('AuthService', () => {
-  let service: AuthService;
-  let module: TestingModule;
+  let authService: AuthService;
+  let testingModule: TestingModule;
+  const phoneNumber = '+380977777777';
 
-  beforeEach(async () => {
-    module = await Test.createTestingModule({
-      providers: [AuthService, MockedUserService, MockedMessagingService],
-    }).compile();
+  beforeAll(async () => {
+    const { module, service } = await initAuthServiceTestModule();
 
-    service = module.get<AuthService>(AuthService);
+    authService = service;
+    testingModule = module;
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(authService).toBeDefined();
   });
 
-  it('invokes messaging service on sending sms', async () => {
-    const phoneNumber = '+380977777777';
+  describe('Sending sms', () => {
+    it('invokes user service to find user', async () => {
+      await authService.sendSms(phoneNumber);
 
-    await service.sendSms(phoneNumber);
+      const userService =
+        testingModule.get<MockedUserServiceClass>(UserService);
 
-    const messagingService = module.get(
-      MessagingService,
-    ) as MockedMessagingServiceClass;
+      expect(userService.findByPhoneNumber).toHaveBeenCalled();
+    });
 
-    expect(messagingService.sendVerificationCode).toHaveBeenCalledWith({
-      phoneNumber,
+    it('invokes user service to create user if not exist', async () => {
+      const userService =
+        testingModule.get<MockedUserServiceClass>(UserService);
+
+      // * ensure that createUser has preconditions to be called
+      jest
+        .spyOn(userService, 'findByPhoneNumber')
+        .mockImplementation(() => Promise.resolve(null));
+
+      await authService.sendSms(phoneNumber);
+
+      expect(userService.createUser).toHaveBeenCalled();
+    });
+
+    it('invokes messaging service to send sms', async () => {
+      await authService.sendSms(phoneNumber);
+
+      const messagingService =
+        testingModule.get<MockedMessagingServiceClass>(MessagingService);
+
+      expect(messagingService.sendVerificationCode).toHaveBeenCalledWith({
+        phoneNumber,
+      });
     });
   });
 });

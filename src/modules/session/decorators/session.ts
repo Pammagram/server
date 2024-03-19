@@ -14,6 +14,6 @@ export const Session = createParamDecorator(
 
     const gqlContext = ctx.getContext<GqlContext>();
 
-    return gqlContext.extra.session;
+    return gqlContext.extra?.session;
   },
 );

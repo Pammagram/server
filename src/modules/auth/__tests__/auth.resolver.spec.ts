@@ -1,49 +1,66 @@
-import { MockedConfigService } from '@core/__mocks__/config.service.mock';
-import { MockedMessagingService } from '@modules/messaging/__mocks__/messaging.service.mock';
-import { MockedSessionService } from '@modules/session/__mocks__/session.service.mock';
-import { MockedUserService } from '@modules/user/__mocks__/service';
-import { Test, TestingModule } from '@nestjs/testing';
+import { CookieService } from '@modules/cookie/cookie.service';
+import { MessagingService } from '@modules/messaging/messaging.service';
+import { SessionService } from '@modules/session';
+import { TestingModule } from '@nestjs/testing';
 
-import {
-  MockedAuthService,
-  MockedAuthServiceClass,
-} from '../__mocks__/auth.service.mock';
-import { AuthResolver } from '../resolver';
-import { AuthService } from '../service';
+import { initAuthResolverTestModule, triggerVerifySms } from './utils';
+
+import { MockedAuthServiceClass } from '../__mocks__/auth.service.mock';
+import { AuthResolver } from '../auth.resolver';
+import { AuthService } from '../auth.service';
 
 describe('AuthResolver', () => {
-  let resolver: AuthResolver;
-  let module: TestingModule;
+  let authResolver: AuthResolver;
+  let testModule: TestingModule;
 
-  beforeEach(async () => {
-    module = await Test.createTestingModule({
-      providers: [
-        AuthResolver,
-        MockedAuthService,
-        MockedUserService,
-        MockedMessagingService,
-        MockedConfigService,
-        MockedSessionService,
-      ],
-    }).compile();
+  beforeAll(async () => {
+    const { module, resolver } = await initAuthResolverTestModule();
 
-    resolver = module.get<AuthResolver>(AuthResolver);
+    authResolver = resolver;
+    testModule = module;
   });
 
   it('should be defined', () => {
-    expect(resolver).toBeDefined();
+    expect(authResolver).toBeDefined();
   });
 
-  describe('invokes right services', () => {
-    it('invoke sending sms service', async () => {
+  describe('Sending sms', () => {
+    it('invoke messaging service to send sms', async () => {
       const authService: MockedAuthServiceClass =
-        module.get<MockedAuthServiceClass>(AuthService);
+        testModule.get<MockedAuthServiceClass>(AuthService);
 
       const phoneNumber = '+380977777777';
 
-      await resolver.sendSms({ phoneNumber });
+      await authResolver.sendSms({ phoneNumber });
 
       expect(authService.sendSms).toHaveBeenCalledWith(phoneNumber);
+    });
+  });
+
+  describe('Verifying sms', () => {
+    it('invokes messaging service to validate code', async () => {
+      const messagingService =
+        testModule.get<MessagingService>(MessagingService);
+
+      await triggerVerifySms(authResolver);
+
+      expect(messagingService.validateVerificationCode).toHaveBeenCalled();
+    });
+
+    it('invokes session service to create session', async () => {
+      const sessionService = testModule.get<SessionService>(SessionService);
+
+      await triggerVerifySms(authResolver);
+
+      expect(sessionService.createSession).toHaveBeenCalled();
+    });
+
+    it('invokes cookies service to set auth cookie', async () => {
+      const cookieService = testModule.get<CookieService>(CookieService);
+
+      await triggerVerifySms(authResolver);
+
+      expect(cookieService.setCookie).toHaveBeenCalled();
     });
   });
 });

@@ -9,6 +9,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AppResolver } from './app.resolver';
+import { CookieModule } from './modules/cookie/cookie.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AppResolver } from './app.resolver';
     AuthModule,
     SessionModule,
     ChatModule,
+    CookieModule,
   ],
   providers: [AppResolver],
 })

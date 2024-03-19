@@ -16,21 +16,21 @@ type ValidateVerificationCodeParams = {
 export class MessagingService {
   private readonly twilioClient: Twilio;
 
-  private readonly config: ConfigType['auth'];
+  private readonly authConfig: ConfigType['auth'];
 
   constructor(
     @Config()
     configService: ConfigType,
   ) {
-    this.config = configService.auth;
-    const { twilioAccountServiceId, twilioAuthToken } = this.config;
+    this.authConfig = configService.auth;
+    const { twilioAccountServiceId, twilioAuthToken } = this.authConfig;
 
     this.twilioClient = new Twilio(twilioAccountServiceId, twilioAuthToken);
   }
 
   async sendVerificationCode(params: SendVerificationCodeParams) {
     const { phoneNumber } = params;
-    const { twilioVerificationServiceId } = this.config;
+    const { twilioVerificationServiceId } = this.authConfig;
 
     await this.twilioClient.verify.v2
       .services(twilioVerificationServiceId)
@@ -42,7 +42,7 @@ export class MessagingService {
 
   async validateVerificationCode(params: ValidateVerificationCodeParams) {
     const { phoneNumber, code } = params;
-    const { twilioVerificationServiceId } = this.config;
+    const { twilioVerificationServiceId } = this.authConfig;
 
     const verification = await this.twilioClient.verify.v2
       .services(twilioVerificationServiceId)

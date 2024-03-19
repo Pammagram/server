@@ -1,5 +1,4 @@
 import { GqlContext } from '@modules/common/decorators';
-import { SessionDto } from '@modules/session/dto';
 import {
   CanActivate,
   ExecutionContext,
@@ -10,7 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext & { session?: SessionDto }): boolean {
+  canActivate(context: ExecutionContext): boolean {
     const ctx = GqlExecutionContext.create(context).getContext<GqlContext>();
     const session = ctx?.extra?.session;
 

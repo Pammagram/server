@@ -1,5 +1,6 @@
 import { ConfigType } from '@config';
 import { Config, Input, Ip, Response } from '@modules/common/decorators';
+import { CookieService } from '@modules/cookie/cookie.service';
 import { MessagingService } from '@modules/messaging/messaging.service';
 import { SessionId, SessionService } from '@modules/session';
 import { UserService } from '@modules/user/user.service';
@@ -7,6 +8,7 @@ import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { Response as ExpressResponse } from 'express';
 
+import { AuthService } from './auth.service';
 import { ONE_YEAR, SESSION_ID } from './constants';
 import {
   LogoutOutput,
@@ -16,17 +18,21 @@ import {
   VerifySmsOutput,
 } from './dto';
 import { AuthGuard } from './guards';
-import { AuthService } from './service';
 
 @Resolver()
 export class AuthResolver {
+  private readonly appConfig: ConfigType['app'];
+
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly sessionService: SessionService,
     private readonly messagingService: MessagingService,
-    @Config() private readonly configService: ConfigType,
-  ) {}
+    private readonly cookieService: CookieService,
+    @Config() configService: ConfigType,
+  ) {
+    this.appConfig = configService.app;
+  }
 
   @Mutation(() => SendSmsOutput)
   async sendSms(@Input() input: SendSmsInput): Promise<SendSmsOutput> {
@@ -64,11 +70,15 @@ export class AuthResolver {
       user,
     });
 
-    response.cookie(SESSION_ID, sessionId, {
-      httpOnly: true,
-      secure: this.configService.app.isProduction,
-      signed: true,
-      expires: new Date(Date.now() + ONE_YEAR),
+    this.cookieService.setCookie(response, {
+      name: SESSION_ID,
+      value: sessionId,
+      options: {
+        expires: new Date(Date.now() + ONE_YEAR),
+        isHttpOnly: true,
+        isSecure: this.appConfig.isProduction,
+        isSigned: true,
+      },
     });
 
     return {
