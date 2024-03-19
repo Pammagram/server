@@ -19,8 +19,8 @@ export type GqlContext = {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- We don't know types beforehand
-export const Input = (...args) => Args('input', ...args);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any -- We don't know types beforehand
+export const Input = (...args: any[]) => Args('input', ...args);
 
 export const Cookies = createParamDecorator(
   (cookieName: string, ctx: ExecutionContext) => {

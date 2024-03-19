@@ -63,7 +63,8 @@ export class UserService {
   }
 
   async findUserBySessionId(sessionId: string): Promise<UserDto> {
-    const { user } = await this.sessionService.findBySessionId(sessionId);
+    const { user } =
+      await this.sessionService.findBySessionByIdOrFail(sessionId);
 
     return user;
   }

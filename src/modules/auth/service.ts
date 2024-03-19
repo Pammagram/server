@@ -19,7 +19,6 @@ export class AuthService {
       // ? TODO we can utilize redis and store temp user there with TMP
       user = await this.userService.createUser({
         phoneNumber,
-        username: null,
         chats: [],
       });
     }
