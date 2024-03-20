@@ -1,4 +1,4 @@
-import config, { configValidationSchema } from '@config';
+import { config, configValidationSchema } from '@config';
 import { AuthModule } from '@modules/auth/module';
 import { ChatModule } from '@modules/chat/chat.module';
 import { DbModule } from '@modules/db/db.module';
@@ -15,9 +15,8 @@ import { CookieModule } from './modules/cookie/cookie.module';
   imports: [
     GraphqlModule,
     ConfigModule.forRoot({
-      isGlobal: true,
       load: [config],
-      validationSchema: configValidationSchema,
+      validate: (env) => configValidationSchema.parse(env),
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     DbModule,

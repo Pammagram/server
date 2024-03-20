@@ -1,10 +1,10 @@
-import * as Joi from 'joi';
+import * as zod from 'zod';
 
-export const appValidationSchema = Joi.object({
-  PORT: Joi.number().required(),
+export const appValidationSchema = zod.object({
+  PORT: zod.number(),
 });
 
-export default () => ({
+export const appConfig = () => ({
   port: Number(process.env.PORT),
   isDevelopment: process.env.NODE_ENV !== 'production',
   isProduction: process.env.NODE_ENV === 'production',

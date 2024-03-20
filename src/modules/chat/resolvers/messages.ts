@@ -38,7 +38,7 @@ export class MessageResolver {
         chat: { members },
       } = data;
 
-      const userId = context.extra.session.user.id;
+      const userId = context.extra?.session?.user.id;
 
       if (members.some((member) => member.id === userId)) {
         return true;
@@ -58,7 +58,7 @@ export class MessageResolver {
   ): Promise<AddMessageOutput> {
     const { chatId, text } = input;
 
-    const user = await this.useService.findUserBySessionId(sessionId);
+    const user = await this.useService.findUserBySessionIdOrFail(sessionId);
 
     // eslint-disable-next-line @typescript-eslint/naming-convention -- we need to conform to conventions in resolvers
     const data = await this.chatService.addMessage(user.id, chatId, text);

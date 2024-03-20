@@ -1,4 +1,4 @@
-import { MockedConfigService } from '@core/__mocks__/config.service.mock';
+import { MockedConfigService } from '@config/__mocks__/config.service.mock';
 import { MockedCookieService } from '@modules/cookie/__mocks__/cookie.service.mock';
 import { MockedMessagingService } from '@modules/messaging/__mocks__/messaging.service.mock';
 import { MockedSessionService } from '@modules/session/__mocks__/session.service.mock';
@@ -31,7 +31,7 @@ export const initAuthServiceTestModule = async () => {
     providers: [AuthService, MockedUserService, MockedMessagingService],
   }).compile();
 
-  const service = module.get<AuthService>(AuthService);
+  const service = await module.resolve<AuthService>(AuthService);
 
   return {
     module,
@@ -40,19 +40,21 @@ export const initAuthServiceTestModule = async () => {
 };
 
 export const initAuthResolverTestModule = async () => {
+  console.log(' MockedConfigService', MockedConfigService);
+
   const module = await Test.createTestingModule({
     providers: [
       AuthResolver,
       MockedAuthService,
       MockedUserService,
-      MockedMessagingService,
-      MockedConfigService,
       MockedSessionService,
+      MockedMessagingService,
       MockedCookieService,
+      MockedConfigService,
     ],
   }).compile();
 
-  const resolver = module.get<AuthResolver>(AuthResolver);
+  const resolver = await module.resolve<AuthResolver>(AuthResolver);
 
   return {
     module,

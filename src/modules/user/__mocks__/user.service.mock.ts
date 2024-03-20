@@ -14,14 +14,15 @@ export class MockedUserServiceClass implements PublicInterface<UserService> {
 
   findByUserIds = jest.fn<UserService['findByUserIds']>();
 
-  findUserBySessionId = jest.fn<UserService['findUserBySessionId']>();
+  findUserBySessionIdOrFail =
+    jest.fn<UserService['findUserBySessionIdOrFail']>();
 
-  strictFindByPhoneNumber = jest.fn<UserService['strictFindByPhoneNumber']>();
+  findByPhoneNumberOrFail = jest.fn<UserService['findByPhoneNumberOrFail']>();
 
   updateByUserId = jest.fn<UserService['updateByUserId']>();
 }
 
 export const MockedUserService: Provider = {
-  useClass: MockedUserServiceClass,
   provide: UserService,
+  useClass: MockedUserServiceClass,
 };

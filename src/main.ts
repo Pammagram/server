@@ -1,4 +1,5 @@
-import { CONFIG_PROVIDER, ConfigType } from '@config';
+import { Config } from '@config';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 
@@ -6,12 +7,17 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const config = app.get<ConfigType>(CONFIG_PROVIDER);
+  const configService = app.get<ConfigService<Config>>(ConfigService);
 
-  const { cookieSecret } = config.security;
+  const cookieSecret = configService.getOrThrow('security.cookieSecret', {
+    infer: true,
+  });
+
+  const port = configService.getOrThrow('app.port', {
+    infer: true,
+  });
 
   app.use(cookieParser(cookieSecret));
-  const { port } = config.app;
 
   app.enableCors({
     origin: true,

@@ -1,9 +1,10 @@
-import { CONFIG_PROVIDER, ConfigType } from '@config';
+import { Config } from '@config';
 import { SESSION_ID } from '@modules/auth/constants';
 import { GqlContext } from '@modules/common/decorators';
 import { SessionService } from '@modules/session/service';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { parse } from 'cookie';
 import { signedCookie } from 'cookie-parser';
@@ -12,10 +13,10 @@ import { signedCookie } from 'cookie-parser';
   imports: [
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      inject: [SessionService, CONFIG_PROVIDER],
+      inject: [SessionService, ConfigService],
       useFactory: (
         sessionService: SessionService,
-        configService: ConfigType,
+        configService: ConfigService<Config>,
       ): ApolloDriverConfig => ({
         autoSchemaFile: true,
         allowBatchedHttpRequests: true,
@@ -78,13 +79,19 @@ import { signedCookie } from 'cookie-parser';
 
               const sessionIdEncrypted = parseCookie(rawHeaders, SESSION_ID);
 
+              if (!sessionIdEncrypted) {
+                return;
+              }
+
               const sessionId = signedCookie(
                 sessionIdEncrypted,
-                configService.security.cookieSecret,
+                configService.getOrThrow('security.cookieSecret', {
+                  infer: true,
+                }),
               );
 
               if (!sessionId) {
-                return false;
+                return;
               }
 
               const session =
@@ -92,6 +99,7 @@ import { signedCookie } from 'cookie-parser';
                   sessionId,
                 );
 
+              // @ts-expect-error -- mismatching types
               Object.assign(ctx.extra, {
                 session,
               });
@@ -113,9 +121,9 @@ export class GraphqlModule {}
 export const parseCookie = (headers: string[], cookieName: string) => {
   const cookiesIndex = headers.findIndex((header) => header === 'Cookie') + 1;
 
-  const cookiesRaw = headers[cookiesIndex];
+  const cookiesRaw = headers[cookiesIndex] as string;
 
-  const cookies = parse(cookiesRaw);
+  const cookies = parse(cookiesRaw) as Record<string, string>;
 
   return cookies[cookieName];
 };

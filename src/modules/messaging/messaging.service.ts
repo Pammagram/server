@@ -1,6 +1,6 @@
-import { ConfigType } from '@config';
-import { Config } from '@modules/common/decorators';
+import { Config } from '@config';
 import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Twilio } from 'twilio';
 
 type SendVerificationCodeParams = {
@@ -16,13 +16,11 @@ type ValidateVerificationCodeParams = {
 export class MessagingService {
   private readonly twilioClient: Twilio;
 
-  private readonly authConfig: ConfigType['auth'];
+  private readonly authConfig: Config['auth'];
 
-  constructor(
-    @Config()
-    configService: ConfigType,
-  ) {
-    this.authConfig = configService.auth;
+  constructor(configService: ConfigService<Config>) {
+    this.authConfig = configService.getOrThrow('auth', { infer: true });
+
     const { twilioAccountServiceId, twilioAuthToken } = this.authConfig;
 
     this.twilioClient = new Twilio(twilioAccountServiceId, twilioAuthToken);
@@ -30,6 +28,7 @@ export class MessagingService {
 
   async sendVerificationCode(params: SendVerificationCodeParams) {
     const { phoneNumber } = params;
+
     const { twilioVerificationServiceId } = this.authConfig;
 
     await this.twilioClient.verify.v2
@@ -42,6 +41,7 @@ export class MessagingService {
 
   async validateVerificationCode(params: ValidateVerificationCodeParams) {
     const { phoneNumber, code } = params;
+
     const { twilioVerificationServiceId } = this.authConfig;
 
     const verification = await this.twilioClient.verify.v2

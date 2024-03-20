@@ -1,9 +1,9 @@
-import * as Joi from 'joi';
+import * as zod from 'zod';
 
-export const securityValidationSchema = Joi.object({
-  COOKIE_SECRET: Joi.string().required(),
+export const securityValidationSchema = zod.object({
+  COOKIE_SECRET: zod.string(),
 });
 
-export default () => ({
+export const securityConfig = () => ({
   cookieSecret: process.env.COOKIE_SECRET,
 });

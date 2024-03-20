@@ -103,7 +103,7 @@ export class ChatService {
       title,
     });
 
-    const updatedChat = await this.findById(chatId);
+    const updatedChat = await this.findByIdOrFail(chatId);
 
     return updatedChat;
   }
@@ -119,7 +119,7 @@ export class ChatService {
   }
 
   async addMembers(chatId: number, userIds: number[]): Promise<boolean> {
-    const chat = await this.chatsRepository.findOne({
+    const chat = await this.chatsRepository.findOneOrFail({
       where: {
         id: chatId,
       },
@@ -145,7 +145,7 @@ export class ChatService {
   }
 
   async removeMember(chatId: number, memberId: number): Promise<boolean> {
-    const chat = await this.chatsRepository.findOne({
+    const chat = await this.chatsRepository.findOneOrFail({
       where: {
         id: chatId,
       },
@@ -185,7 +185,7 @@ export class ChatService {
       text,
     });
 
-    const insertedId = data.identifiers[0].id as number;
+    const insertedId = data.identifiers[0]?.['id'] as number;
 
     const newMessage = await this.findMessageByIdOrFail(insertedId);
 

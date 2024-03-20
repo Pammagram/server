@@ -1,19 +1,10 @@
 import { PublicInterface } from '@core/types';
 import { jest } from '@jest/globals';
-import { mockedUser } from '@modules/user/__mocks__/user.entity.mock';
 import { Provider } from '@nestjs/common';
 
-import { SessionEntity } from '../entities';
-import { SessionService } from '../service';
+import { mockedSession } from './session.entity.mock';
 
-export const mockedSession: SessionEntity = {
-  device: 'test device',
-  id: 1,
-  ip: 'test ip',
-  lastVisitInMs: new Date(),
-  sessionId: 'test session id',
-  user: mockedUser,
-};
+import { SessionService } from '../service';
 
 export class MockedSessionServiceClass
   implements PublicInterface<SessionService>
@@ -26,8 +17,9 @@ export class MockedSessionServiceClass
 
   findBySessionId = jest.fn<SessionService['findBySessionId']>();
 
-  findBySessionByIdOrFail =
-    jest.fn<SessionService['findBySessionByIdOrFail']>();
+  findBySessionByIdOrFail = jest
+    .fn<SessionService['findBySessionByIdOrFail']>()
+    .mockImplementation((_data) => Promise.resolve(mockedSession));
 
   findSessionBySessionIdOrFailAndUpdate =
     jest.fn<SessionService['findSessionBySessionIdOrFailAndUpdate']>();

@@ -26,13 +26,13 @@ export class UserResolver {
     return { data };
   }
 
-  @Query(() => MeOutput, { nullable: true })
+  @Query(() => MeOutput)
   async me(@SessionId() sessionId: string): Promise<MeOutput> {
     if (!sessionId) {
-      return null;
+      return { data: null };
     }
 
-    const data = await this.userService.findUserBySessionId(sessionId);
+    const data = await this.userService.findUserBySessionIdOrFail(sessionId);
 
     return { data };
   }
@@ -54,7 +54,7 @@ export class UserResolver {
     @Input() input: UpdateUserInput,
   ): Promise<CreateUserOutput> {
     const { id: userId } =
-      await this.userService.findUserBySessionId(sessionId);
+      await this.userService.findUserBySessionIdOrFail(sessionId);
 
     await this.userService.updateByUserId(userId, input);
 

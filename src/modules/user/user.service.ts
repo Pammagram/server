@@ -42,7 +42,7 @@ export class UserService {
     });
   }
 
-  async strictFindByPhoneNumber(phoneNumber: string): Promise<UserDto> {
+  async findByPhoneNumberOrFail(phoneNumber: string): Promise<UserDto> {
     const user = await this.usersRepository.findOneOrFail({
       where: {
         phoneNumber,
@@ -62,7 +62,7 @@ export class UserService {
     return true;
   }
 
-  async findUserBySessionId(sessionId: string): Promise<UserDto> {
+  async findUserBySessionIdOrFail(sessionId: string): Promise<UserDto> {
     const { user } =
       await this.sessionService.findBySessionByIdOrFail(sessionId);
 

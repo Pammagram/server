@@ -1,12 +1,13 @@
-import { CONFIG_PROVIDER, ConfigType } from '@config';
+import { Config } from '@config';
 import { Provider } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-export class MockedConfigServiceClass implements ConfigType {
-  get app(): ConfigType['app'] {
+export class MockedConfigServiceClass implements Config {
+  get app(): Config['app'] {
     return { isDevelopment: false, isProduction: true, port: 1 };
   }
 
-  get auth(): ConfigType['auth'] {
+  get auth(): Config['auth'] {
     return {
       saltRounds: 1,
       sessionTimeoutInMs: 1,
@@ -16,7 +17,7 @@ export class MockedConfigServiceClass implements ConfigType {
     };
   }
 
-  get database(): ConfigType['database'] {
+  get database(): Config['database'] {
     return {
       host: 'test localhost',
       name: 'test name',
@@ -26,7 +27,7 @@ export class MockedConfigServiceClass implements ConfigType {
     };
   }
 
-  get security(): ConfigType['security'] {
+  get security(): Config['security'] {
     return {
       cookieSecret: 'test cookie secret',
     };
@@ -34,6 +35,6 @@ export class MockedConfigServiceClass implements ConfigType {
 }
 
 export const MockedConfigService: Provider = {
-  provide: CONFIG_PROVIDER,
+  provide: ConfigService,
   useClass: MockedConfigServiceClass,
 };

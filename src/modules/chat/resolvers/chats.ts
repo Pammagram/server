@@ -127,7 +127,7 @@ export class ChatResolver {
       const { members } = data;
 
       // TODO functions getters
-      const userId = context.extra.session.user.id;
+      const userId = context.extra?.session?.user.id;
 
       if (members.some((member) => member.id === userId)) {
         return true;
@@ -149,8 +149,7 @@ export class ChatResolver {
 
       const { members } = data;
 
-      // TODO functions getters
-      const userId = context.extra.session.user.id;
+      const userId = context.extra?.session?.user.id;
 
       if (members.some((member) => member.id === userId)) {
         return true;

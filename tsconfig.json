@@ -17,6 +17,7 @@
       "@modules": ["modules"],
       "@modules/*": ["modules/*"],
       "@config": ["config"],
+      "@config/*": ["config/*"],
       "@core": ["core"],
       "@core/*": ["core/*"],
     }

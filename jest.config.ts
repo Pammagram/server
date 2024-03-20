@@ -3,7 +3,7 @@ import { JestConfigWithTsJest } from 'ts-jest';
 
 const jestConfig: JestConfigWithTsJest = {
   moduleFileExtensions: ['js', 'json', 'ts'],
-  testRegex: '.*/.*/__tests__/.*\\.spec\\.ts',
+  testRegex: 'src/.*/.*/__tests__/.*\\.spec\\.ts',
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },

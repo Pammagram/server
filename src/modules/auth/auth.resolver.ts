@@ -1,10 +1,11 @@
-import { ConfigType } from '@config';
-import { Config, Input, Ip, Response } from '@modules/common/decorators';
+import { Config } from '@config';
+import { Input, Ip, Response } from '@modules/common/decorators';
 import { CookieService } from '@modules/cookie/cookie.service';
 import { MessagingService } from '@modules/messaging/messaging.service';
 import { SessionId, SessionService } from '@modules/session';
 import { UserService } from '@modules/user/user.service';
 import { NotFoundException, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { Response as ExpressResponse } from 'express';
 
@@ -21,18 +22,14 @@ import { AuthGuard } from './guards';
 
 @Resolver()
 export class AuthResolver {
-  private readonly appConfig: ConfigType['app'];
-
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly sessionService: SessionService,
     private readonly messagingService: MessagingService,
     private readonly cookieService: CookieService,
-    @Config() configService: ConfigType,
-  ) {
-    this.appConfig = configService.app;
-  }
+    private readonly configService: ConfigService<Config>,
+  ) {}
 
   @Mutation(() => SendSmsOutput)
   async sendSms(@Input() input: SendSmsInput): Promise<SendSmsOutput> {
@@ -62,7 +59,7 @@ export class AuthResolver {
       );
     }
 
-    const user = await this.userService.strictFindByPhoneNumber(phoneNumber);
+    const user = await this.userService.findByPhoneNumberOrFail(phoneNumber);
 
     const { sessionId } = await this.sessionService.createSession({
       device,
@@ -76,7 +73,9 @@ export class AuthResolver {
       options: {
         expires: new Date(Date.now() + ONE_YEAR),
         isHttpOnly: true,
-        isSecure: this.appConfig.isProduction,
+        isSecure: this.configService.getOrThrow('app.isProduction', {
+          infer: true,
+        }),
         isSigned: true,
       },
     });
