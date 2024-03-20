@@ -1,29 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
+import { ClearCookieParams, SetCookieParams } from './cookie.types';
+
 @Injectable()
 export class CookieService {
   setCookie(response: Response, params: SetCookieParams) {
-    const { options, name, value } = params;
-    const { expires, isHttpOnly, isSecure, isSigned } = options;
+    const { name, value, options } = params;
 
     response.cookie(name, value, {
-      httpOnly: isHttpOnly,
-      secure: isSecure,
-      signed: isSigned,
-      expires,
+      httpOnly: options?.isHttpOnly,
+      secure: options?.isSecure,
+      signed: options?.isSigned,
+      expires: options?.expires,
     });
   }
+
+  clearCookie(response: Response, params: ClearCookieParams) {
+    const { name } = params;
+
+    response.cookie(name, null);
+  }
 }
-
-type SetCookieParams = {
-  name: string;
-  options: {
-    expires: Date;
-    isHttpOnly: boolean;
-    isSecure: boolean;
-    isSigned: boolean;
-  };
-
-  value: string;
-};

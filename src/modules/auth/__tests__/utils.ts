@@ -4,6 +4,7 @@ import { MockedMessagingService } from '@modules/messaging/__mocks__/messaging.s
 import { MockedSessionService } from '@modules/session/__mocks__/session.service.mock';
 import { MockedUserService } from '@modules/user/__mocks__/user.service.mock';
 import { Test } from '@nestjs/testing';
+import { Response } from 'express';
 
 import { MockedAuthService } from '../__mocks__/auth.service.mock';
 import { AuthResolver } from '../auth.resolver';
@@ -12,12 +13,17 @@ import { AuthService } from '../auth.service';
 export const triggerVerifySms = async (resolver: AuthResolver) => {
   const phoneNumber = '+380977777777';
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any -- mock response object
-  await resolver.verifySms('test ip', {} as any, {
+  await resolver.verifySms('test ip', mockedExpressResponse, {
     code: 'test code',
     device: 'test device',
     phoneNumber,
   });
+};
+
+export const triggerLogout = async (resolver: AuthResolver) => {
+  const sessionId = 'test session id';
+
+  await resolver.logout(mockedExpressResponse, sessionId);
 };
 
 export const initAuthServiceTestModule = async () => {
@@ -53,3 +59,5 @@ export const initAuthResolverTestModule = async () => {
     resolver,
   };
 };
+
+export const mockedExpressResponse = {} as Response;

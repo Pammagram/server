@@ -94,7 +94,7 @@ export class AuthResolver {
   ): Promise<LogoutOutput> {
     await this.sessionService.removeBySessionId(sessionId);
 
-    response.cookie(SESSION_ID, null);
+    this.cookieService.clearCookie(response, { name: SESSION_ID });
 
     return {
       data: true,

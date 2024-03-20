@@ -3,7 +3,11 @@ import { MessagingService } from '@modules/messaging/messaging.service';
 import { SessionService } from '@modules/session';
 import { TestingModule } from '@nestjs/testing';
 
-import { initAuthResolverTestModule, triggerVerifySms } from './utils';
+import {
+  initAuthResolverTestModule,
+  triggerLogout,
+  triggerVerifySms,
+} from './utils';
 
 import { MockedAuthServiceClass } from '../__mocks__/auth.service.mock';
 import { AuthResolver } from '../auth.resolver';
@@ -64,5 +68,23 @@ describe('AuthResolver', () => {
     });
 
     // TODO check that cookie service gets SESSION_ID constant
+  });
+
+  describe('Logging out', () => {
+    it('invokes session service to remove session', async () => {
+      const sessionService = testModule.get<SessionService>(SessionService);
+
+      await triggerLogout(authResolver);
+
+      expect(sessionService.removeBySessionId).toHaveBeenCalled();
+    });
+
+    it('invokes cookie service to clear cookie', async () => {
+      const cookieService = testModule.get<CookieService>(CookieService);
+
+      await triggerLogout(authResolver);
+
+      expect(cookieService.clearCookie).toHaveBeenCalled();
+    });
   });
 });

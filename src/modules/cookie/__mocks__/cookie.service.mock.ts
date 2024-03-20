@@ -8,6 +8,8 @@ export class MockedCookieServiceClass
   implements PublicInterface<CookieService>
 {
   setCookie = jest.fn<CookieService['setCookie']>();
+
+  clearCookie = jest.fn<CookieService['clearCookie']>();
 }
 
 export const MockedCookieService: Provider = {
