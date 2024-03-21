@@ -1,5 +1,5 @@
 {
-  "include": ["./src", "env.d.ts"],
+  "include": ["./src", "env.d.ts", "jest.config.ts"],
   "extends": "./tsconfig.checks",
   "compilerOptions": {
     "module": "commonjs",
