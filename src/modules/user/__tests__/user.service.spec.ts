@@ -77,29 +77,4 @@ describe('AuthService', () => {
 
     expect(sessionService.findBySessionByIdOrFail).toHaveBeenCalled();
   });
-
-  // it('invokes user service to create user if not exist', async () => {
-  //   const userService =
-  //     testingModule.get<MockedUserServiceClass>(UserService);
-
-  //   // * ensure that createUser has preconditions to be called
-  //   jest
-  //     .spyOn(userService, 'findByPhoneNumber')
-  //     .mockImplementation(() => Promise.resolve(null));
-
-  //   await authService.sendSms(phoneNumber);
-
-  //   expect(userService.createUser).toHaveBeenCalled();
-  // });
-
-  // it('invokes messaging service to send sms', async () => {
-  //   await authService.sendSms(phoneNumber);
-
-  //   const messagingService =
-  //     testingModule.get<MockedMessagingServiceClass>(MessagingService);
-
-  //   expect(messagingService.sendVerificationCode).toHaveBeenCalledWith({
-  //     phoneNumber,
-  //   });
-  // });
 });
