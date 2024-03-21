@@ -1,11 +1,11 @@
-import * as zod from 'zod';
+import * as Joi from 'joi';
 
-export const databaseValidationSchema = zod.object({
-  DATABASE_HOST: zod.string(),
-  DATABASE_PORT: zod.number(),
-  DATABASE_USERNAME: zod.string(),
-  DATABASE_NAME: zod.string(),
-  DATABASE_PASSWORD: zod.string(),
+export const databaseValidationSchema = Joi.object({
+  DATABASE_HOST: Joi.string(),
+  DATABASE_PORT: Joi.number(),
+  DATABASE_USERNAME: Joi.string(),
+  DATABASE_NAME: Joi.string(),
+  DATABASE_PASSWORD: Joi.string(),
 });
 
 export const dbConfig = () => ({

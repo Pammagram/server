@@ -17,6 +17,7 @@ RUN npm ci --ignore-scripts
 
 COPY tsconfig*.json ./
 COPY .env.development ./
+COPY env.d.ts ./env.d.ts
 COPY src ./src
 
 # workaround for incompatibility of os

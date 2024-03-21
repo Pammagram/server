@@ -15,8 +15,9 @@ import { CookieModule } from './modules/cookie/cookie.module';
   imports: [
     GraphqlModule,
     ConfigModule.forRoot({
+      isGlobal: true,
       load: [config],
-      validate: (env) => configValidationSchema.parse(env),
+      validationSchema: configValidationSchema,
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     DbModule,

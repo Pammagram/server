@@ -1,23 +1,23 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      // Base
-      NODE_ENV: 'production' | 'development';
+      // * Base
+      NODE_ENV: import('@config/app').NodeEnv;
 
-      // App
+      // * App
       PORT: string;
 
-      // Auth
+      // * Auth
       SESSION_TIMEOUT_IN_MS: number;
       SALT_ROUNDS: number;
       TWILIO_VERIFICATION_SERVICE_ID: string;
       TWILIO_AUTH_TOKEN: string;
       TWILIO_ACCOUNT_SERVICE_ID: string;
 
-      // Others
+      // * Others
       COOKIE_SECRET: string;
 
-      // Database
+      // * Database
       DATABASE_HOST: string;
       DATABASE_PORT: number;
       DATABASE_USERNAME: string;

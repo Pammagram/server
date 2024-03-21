@@ -1,11 +1,11 @@
-import * as zod from 'zod';
+import * as Joi from 'joi';
 
-export const authValidationSchema = zod.object({
-  SESSION_TIMEOUT_IN_MS: zod.number(),
-  TWILIO_ACCOUNT_SERVICE_ID: zod.string(),
-  TWILIO_AUTH_TOKEN: zod.string(),
-  TWILIO_VERIFICATION_SERVICE_ID: zod.string(),
-  SALT_ROUNDS: zod.number(),
+export const authValidationSchema = Joi.object({
+  SESSION_TIMEOUT_IN_MS: Joi.number(),
+  TWILIO_ACCOUNT_SERVICE_ID: Joi.string(),
+  TWILIO_AUTH_TOKEN: Joi.string(),
+  TWILIO_VERIFICATION_SERVICE_ID: Joi.string(),
+  SALT_ROUNDS: Joi.number(),
 });
 
 export const authConfig = () => ({

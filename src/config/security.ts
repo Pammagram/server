@@ -1,7 +1,7 @@
-import * as zod from 'zod';
+import * as Joi from 'joi';
 
-export const securityValidationSchema = zod.object({
-  COOKIE_SECRET: zod.string(),
+export const securityValidationSchema = Joi.object({
+  COOKIE_SECRET: Joi.string(),
 });
 
 export const securityConfig = () => ({
