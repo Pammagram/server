@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} has pushed commits
 
 on: [push]
 jobs:
-  check-bats-version:
+  run-test-on-push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
