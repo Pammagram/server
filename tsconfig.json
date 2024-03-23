@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.checks",
   "include": ["./src", "env.d.ts", "jest.config.ts"],
-  "exclude": ["**/__tests__/*", "**/__mocks__/*"],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "module": "commonjs",
     "declaration": false,
