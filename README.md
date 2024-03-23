@@ -3,7 +3,7 @@
 Create `.env.development` file with required credentials
 
 Build project
-`docker-compose build`
+`docker compose --env-file=.env.development build`
 
 Run
-`docker-compose up`
+`docker compose --env-file=.env.development up`
