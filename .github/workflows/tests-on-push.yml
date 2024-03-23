@@ -9,8 +9,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Read .nvmrc
+        run: echo NVMRC=`cat .nvmrc` >> $GITHUB_ENV
+
       - name: Setup node
         uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - run: npm install
       - run: npm run test
