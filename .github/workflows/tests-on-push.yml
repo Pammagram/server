@@ -1,5 +1,5 @@
 name: tests-on-push
-run-name: ${{ github.actor }} has pushed commits to ${{ GITHUB_BASE_REF }}
+run-name: ${{ github.actor }} has pushed commits
 on: [push]
 jobs:
   check-bats-version:
