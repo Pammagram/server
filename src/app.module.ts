@@ -8,7 +8,7 @@ import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { AppResolver } from './app.resolver';
+import { AppController } from './app.controller';
 import { CookieModule } from './modules/cookie/cookie.module';
 
 @Module({
@@ -27,6 +27,6 @@ import { CookieModule } from './modules/cookie/cookie.module';
     ChatModule,
     CookieModule,
   ],
-  providers: [AppResolver],
+  controllers: [AppController],
 })
 export class AppModule {}
