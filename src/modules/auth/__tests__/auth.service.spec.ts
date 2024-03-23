@@ -55,7 +55,7 @@ describe('AuthService', () => {
         testingModule.get<MockedMessagingServiceClass>(MessagingService);
 
       expect(messagingService.sendVerificationCode).toHaveBeenCalledWith({
-        phoneNumber,
+        phoneNumber: 1,
       });
     });
   });
