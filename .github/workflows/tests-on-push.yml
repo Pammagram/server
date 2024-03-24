@@ -1,7 +1,7 @@
 name: tests-on-push
 run-name: ${{ github.actor }} has pushed commits
 
-on: [push]
+on: [push, pull_request]
 jobs:
   run-test-on-push:
     runs-on: ubuntu-latest
