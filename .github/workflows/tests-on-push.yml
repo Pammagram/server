@@ -12,22 +12,10 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          # cache: 'npm'
+          cache: 'npm'
           node-version-file: '.nvmrc'
       
       - run: npm ci
-
-      # - restore_cache:
-      #     key: v1-npm-{{ checksum "package.json" }}-{{checksum "package-lock.json" }}
-
-      # - run:
-      #     name: Install node dependencies
-      #     command: "[ ! -d node_modules ] && npm ci --loglevel warn --yes || echo package.json and package-lock.json unchanged. Using cache."
-
-      # - save_cache:
-      #     key: v1-npm-{{ checksum "package.json" }}-{{checksum "package-lock.json" }}
-      #     paths:
-      #       - no]]de_modules
 
       - name: Run tests
         run: npm run test
