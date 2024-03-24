@@ -12,11 +12,11 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          # cache: 'npm'
+          cache: 'npm'
           node-version-file: '.nvmrc'
 
       - name: Instal dependencies
-        run: npm i
+        run: npm ci
 
       - name: Run tests
         run: npm run test
