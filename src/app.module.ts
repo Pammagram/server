@@ -20,7 +20,7 @@ import { CookieModule } from './modules/cookie/cookie.module';
       validationSchema: configValidationSchema,
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
-    DbModule,
+    DbModule.forRoot(),
     UserModule,
     AuthModule,
     SessionModule,
