@@ -1,0 +1,32 @@
+name: pammagram
+
+services:
+  server:
+    restart: always
+    container_name: server
+    env_file:
+      - .env.test
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server
+      target: development
+    command: npm run start:dev
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - database
+
+  database:
+      restart: always
+      container_name: database
+      env_file:
+        - .env.tests
+      build:
+        context: .
+        dockerfile: docker/Dockerfile.db
+      environment:
+        - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+        - POSTGRES_USER=${DATABASE_USERNAME}
+        - POSTGRES_DB=${DATABASE_NAME}
+      ports:
+        - ${DATABASE_PORT}:${DATABASE_PORT}

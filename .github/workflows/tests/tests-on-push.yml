@@ -1,0 +1,23 @@
+name: tests-on-push
+run-name: ${{ github.actor }} has pushed commits
+
+on: [push]
+jobs:
+  run-test-on-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "./docker-compose.ci.yml"
+          down-flags: "--volumes"
+          services: |
+            server
+            database
+          test-container: helloworld
+          test-command: "npm test"
+      
+      - name: Run tests
+        run: npm run test
