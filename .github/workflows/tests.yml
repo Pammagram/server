@@ -4,6 +4,7 @@ run-name: ${{ github.actor }} has pushed commits
 on: [push]
 
 env:
+  # TODO make server run in docker as well
   # PORT: 8080
 
   # SESSION_TIMEOUT_IN_MS: 60000 # 60 * 1000 :  60seconds
@@ -48,37 +49,37 @@ jobs:
       - name: Run tests
         run: npm run test:integration
 
-  # unit:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #     - name: Setup node
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         cache: 'npm'
-  #         node-version-file: '.nvmrc'
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+          node-version-file: '.nvmrc'
       
-  #     - run: npm ci
+      - run: npm ci
 
-  #     - name: Run tests
-  #       run: npm run test:unit
+      - name: Run tests
+        run: npm run test:unit
        
-  # linter:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #     - name: Setup node
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         cache: 'npm'
-  #         node-version-file: '.nvmrc'
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+          node-version-file: '.nvmrc'
       
-  #     - run: npm ci
+      - run: npm ci
 
-  #     - name: Run tests
-  #       run: npm run lint
+      - name: Run tests
+        run: npm run lint
       
