@@ -1,0 +1,27 @@
+name: integration-tests
+run-name: ${{ github.actor }} has pushed commits
+
+on: [push]
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: adambirds/docker-compose-action@v1.3.0
+        env:
+            # Database
+            DATABASE_HOST: database
+            DATABASE_PORT: 5432
+            DATABASE_USERNAME: postgres
+            DATABASE_PASSWORD: postgres
+            DATABASE_NAME: postgres
+        with:
+          compose-file: "../../docker-compose.ci.yml"
+        
+      - run: npm ci
+
+      - name: Run tests
+        run: npm run test:integration
