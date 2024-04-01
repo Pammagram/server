@@ -1,4 +1,4 @@
-name: integration-tests
+name: tests
 run-name: ${{ github.actor }} has pushed commits
 
 on: [push]
@@ -22,7 +22,7 @@ env:
   DATABASE_NAME: postgres
 
 jobs:
-  integration-tests:
+  integration:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,7 +30,7 @@ jobs:
 
       - uses: adambirds/docker-compose-action@v1.3.0
         with:
-          compose-file: "docker-compose.ci.yml"
+          compose-file: "./docker-compose.ci.yml"
           service:
             server
           test-container: server
