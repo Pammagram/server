@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.server
-      target: development
+      target: test
     command: npm run start:dev
     ports:
       - ${PORT}:${PORT}
