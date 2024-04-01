@@ -1,5 +1,3 @@
-name: pammagram-tests
-
 services:
   server:
     restart: always
