@@ -1,8 +1,9 @@
 import { beforeEach, describe } from '@jest/globals';
-import { createNewSchema, dropSchema } from '@modules/db/__tests__/utils';
 import { DbModule } from '@modules/db/db.module';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { createNewSchema, dropSchema } from './utils';
 
 describe('Database service', () => {
   let schemaName: string;
