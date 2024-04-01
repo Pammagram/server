@@ -3,7 +3,7 @@
 Create `.env.development` file with required credentials
 
 Build project
-`docker compose --env-file=.env.development build`
+`docker compose -f docker-compose.dev.yml --env-file=.env.development build`
 
 Run
-`docker compose --env-file=.env.development up`
+`docker compose -f docker-compose.dev.yml --env-file=.env.development up`
