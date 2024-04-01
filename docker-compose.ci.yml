@@ -1,11 +1,9 @@
-name: pammagram
+name: pammagram-tests
 
 services:
   server:
     restart: always
     container_name: server
-    env_file:
-      - .env.test
     build:
       context: .
       dockerfile: docker/Dockerfile.server
@@ -19,8 +17,6 @@ services:
   database:
       restart: always
       container_name: database
-      env_file:
-        - .env.tests
       build:
         context: .
         dockerfile: docker/Dockerfile.db

@@ -3,6 +3,24 @@ run-name: ${{ github.actor }} has pushed commits
 
 on: [push]
 
+env:
+  PORT: 8080
+
+  SESSION_TIMEOUT_IN_MS: 60000 # 60 * 1000 :  60seconds
+  COOKIE_SECRET: 60000         # 60 * 1000 :  60seconds
+
+  SALT_ROUNDS: 5
+  TWILIO_VERIFICATION_SERVICE_ID: VA87131e724d22d0afd1605bfb81177ab5
+  TWILIO_AUTH_TOKEN: e7b36e627d7b36e32268c3985d3d16bd
+  TWILIO_ACCOUNT_SERVICE_ID: AC664a470e0b6ed0f2ddae44af64c9f16e
+
+  # Database
+  DATABASE_HOST: database
+  DATABASE_PORT: 5432
+  DATABASE_USERNAME: postgres
+  DATABASE_PASSWORD: postgres
+  DATABASE_NAME: postgres
+
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
@@ -11,17 +29,10 @@ jobs:
         uses: actions/checkout@v4
 
       - uses: adambirds/docker-compose-action@v1.3.0
-        env:
-            # Database
-            DATABASE_HOST: database
-            DATABASE_PORT: 5432
-            DATABASE_USERNAME: postgres
-            DATABASE_PASSWORD: postgres
-            DATABASE_NAME: postgres
         with:
-          compose-file: "../../docker-compose.ci.yml"
-        
-      - run: npm ci
-
-      - name: Run tests
-        run: npm run test:integration
+          compose-file: "./docker-compose.ci.yml"
+          service:
+            server
+          # test-container: server
+          # test-command: "npm run test:integration"
+          
