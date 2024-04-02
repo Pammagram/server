@@ -1,9 +1,6 @@
-name: pammagram
-
 services:
   server:
     restart: always
-    container_name: server
     env_file:
       - .env.development
     build:
@@ -20,7 +17,6 @@ services:
 
   database:
       restart: always
-      container_name: database
       env_file:
         - .env.development
       build:
