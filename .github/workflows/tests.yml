@@ -3,25 +3,6 @@ run-name: ${{ github.actor }} has pushed commits
 
 on: [push]
 
-env:
-  PORT: 8080
-
-  SESSION_TIMEOUT_IN_MS: 60000 # 60 * 1000 :  60seconds
-  COOKIE_SECRET: 60000         # 60 * 1000 :  60seconds
-
-  SALT_ROUNDS: 5
-  TWILIO_VERIFICATION_SERVICE_ID: VA87131e724d22d0afd1605bfb81177ab5
-  TWILIO_AUTH_TOKEN: e7b36e627d7b36e32268c3985d3d16bd
-  TWILIO_ACCOUNT_SERVICE_ID: AC664a470e0b6ed0f2ddae44af64c9f16e
-
-  # Database
-  DATABASE_HOST: localhost
-  DATABASE_PORT: 5432
-  DATABASE_USERNAME: postgres
-  DATABASE_PASSWORD: postgres
-  DATABASE_NAME: postgres
- 
-
 jobs:
   integration:
     runs-on: ubuntu-latest
