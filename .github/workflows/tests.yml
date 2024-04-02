@@ -30,9 +30,10 @@ jobs:
 
       - uses: adambirds/docker-compose-action@v1.3.0
         with:
-          compose-file: "./docker-compose.ci.yml"
-          test-container: server
-          test-command: "npm run test:integration"
+          compose-file: "./docker-compose.yml"
+          down-flags: "--env_file"
+          # test-container: server
+          # test-command: "npm run test:integration"
 
 
   # unit:
