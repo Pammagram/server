@@ -1,16 +1,4 @@
 services:
-  server:
-    env_file:
-      - .env.test
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.server
-      target: test
-    ports:
-      - ${PORT}:${PORT}
-    depends_on:
-      - database
-
   database:
       env_file:
       - .env.test
