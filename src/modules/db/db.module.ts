@@ -24,7 +24,7 @@ export class DbModule {
 
             return {
               type: 'postgres',
-              entities: ['dist/**/*.entity.js'],
+              entities: ['src/**/*.entity.ts'],
               synchronize: true,
               migrationsRun: isDevelopment,
               database: name,
@@ -54,6 +54,7 @@ export class DbModule {
               type: 'postgres',
               synchronize: true,
               migrationsRun: true,
+              entities: ['src/**/*.entity.ts'],
               host: process.env.DATABASE_HOST,
               port: process.env.DATABASE_PORT,
               database: process.env.DATABASE_NAME,

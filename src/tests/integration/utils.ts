@@ -17,6 +17,9 @@ export const generateId = (length: number): string => {
   return result;
 };
 
+/**
+ * @description creates new schema in db to allow run tests in parallel, requires preloaded .env file with db connection params
+ */
 export const createNewSchema = async () => {
   const mainConnection: DataSource = new DataSource({
     type: 'postgres',
