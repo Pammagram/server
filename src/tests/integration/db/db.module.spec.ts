@@ -1,3 +1,4 @@
+import { config, configValidationSchema } from '@config';
 import { beforeEach, describe } from '@jest/globals';
 import { DbModule } from '@modules/db/db.module';
 import { ConfigModule } from '@nestjs/config';
@@ -18,6 +19,8 @@ describe('Database service', () => {
       imports: [
         ConfigModule.forRoot({
           isGlobal: true,
+          load: [config],
+          validationSchema: configValidationSchema,
         }),
         DbModule.forTest(schemaName),
       ],
