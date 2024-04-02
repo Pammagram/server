@@ -15,7 +15,7 @@
     "lint": "tsc --noEmit && eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:unit": "jest -- src/modules",
-    "test:integration": "jest -- tests/integration",
+    "test:integration": "npx dotenv -e .env.test jest -- tests/integration",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

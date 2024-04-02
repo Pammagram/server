@@ -10,4 +10,4 @@ Run
 
 
 # Testing
-To run tests run `npx dotenv -e .env.test npm run test:integration`
+To run tests run `npm run test:integration`

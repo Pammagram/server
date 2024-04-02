@@ -54,6 +54,7 @@ describe('User service', () => {
 
     expect(users).toHaveLength(0);
   });
+
   it('Creates one user', async () => {
     const users = await service.findAll();
 
