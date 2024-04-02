@@ -42,16 +42,15 @@ COPY package*.json ./
 
 # Install app dependencies
 # --ignore-scripts ommits installing husky
-RUN npm ci --ignore-scripts
+RUN npm i --ignore-scripts
 
 # workaround for incompatibility of os
 RUN npm uninstall bcrypt
 RUN npm install bcrypt
 
 COPY tsconfig*.json ./
+COPY .env.test ./
 
 COPY env.d.ts ./env.d.ts
 COPY jest.config.ts ./jest.config.ts
 COPY src ./src
-
-CMD [ "npm", "run", "start:dev" ]
