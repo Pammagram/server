@@ -4,13 +4,13 @@ run-name: ${{ github.actor }} has pushed commits
 on: [push]
 
 env:
- # Database
+  # * those variables duplicate from .env.test in order to run docker compose for server
+  # TODO find a way to avoid duplication of variables
   DATABASE_PORT: 5432
   DATABASE_USERNAME: postgres
   DATABASE_PASSWORD: postgres
   DATABASE_NAME: postgres
  
-
 jobs:
   integration:
     runs-on: ubuntu-latest
