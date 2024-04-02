@@ -1,20 +1,7 @@
 services:
-  # server:
-  #   restart: always
-  #   container_name: server
-  #   build:
-  #     context: .
-  #     dockerfile: docker/Dockerfile.server
-  #     target: test
-  #   command: npm run start:dev
-  #   ports:
-  #     - ${PORT}:${PORT}
-  #   depends_on:
-  #     - database
-
   database:
-      restart: always
-      container_name: database
+      env_file:
+      - .env.test
       build:
         context: .
         dockerfile: docker/Dockerfile.db

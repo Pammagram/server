@@ -22,3 +22,4 @@ pgdata
 # Environmental configurations
 .env*
 !.env.example
+!.env.test

@@ -7,3 +7,7 @@ Build project
 
 Run
 `docker compose -f docker-compose.dev.yml --env-file=.env.development up`
+
+
+# Testing
+To run tests run `npm run test:integration`

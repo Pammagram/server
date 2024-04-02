@@ -17,16 +17,19 @@ export const generateId = (length: number): string => {
   return result;
 };
 
+/**
+ * @description creates new schema in db to allow run tests in parallel, requires preloaded .env file with db connection params
+ */
 export const createNewSchema = async () => {
   const mainConnection: DataSource = new DataSource({
     type: 'postgres',
     synchronize: true,
-    migrationsRun: false,
-    host: 'localhost',
-    port: 5432,
-    database: 'postgres',
-    username: 'postgres',
-    password: 'postgres',
+    migrationsRun: true,
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT,
+    database: process.env.DATABASE_NAME,
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
   });
 
   await mainConnection.initialize();
@@ -47,12 +50,12 @@ export const dropSchema = async (schemaName: string): Promise<void> => {
   const connection = new DataSource({
     type: 'postgres',
     synchronize: true,
-    migrationsRun: false,
-    database: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
+    migrationsRun: true,
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT,
+    database: process.env.DATABASE_NAME,
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
   });
 
   await connection.initialize();
