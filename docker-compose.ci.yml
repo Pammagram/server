@@ -1,4 +1,4 @@
-name: pamagram-test
+name: pamagramtest
 
 services:
   server:
