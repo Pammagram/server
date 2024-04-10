@@ -1,4 +1,4 @@
-import { AuthGuard } from '@modules/auth';
+import { AuthGuard } from '@modules/auth/guards';
 import { Input } from '@modules/common/decorators';
 import { SessionId } from '@modules/session';
 import { UseGuards } from '@nestjs/common';
