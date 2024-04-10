@@ -7,6 +7,7 @@ import { ChatType } from '@modules/chat/entities';
 import { DbModule } from '@modules/db/db.module';
 import { SessionModule } from '@modules/session';
 import { UserModule } from '@modules/user/user.module';
+import { UserService } from '@modules/user/user.service';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { omit, pick } from 'lodash';
@@ -16,7 +17,8 @@ import { createNewSchema, dropSchema } from '../utils';
 describe('Chat service', () => {
   let schemaName: string;
   let module: TestingModule;
-  let service: ChatService;
+  let chatService: ChatService;
+  let userService: UserService;
 
   beforeEach(async () => {
     // TODO can abstract away creating testing module
@@ -45,7 +47,8 @@ describe('Chat service', () => {
       await dropSchema(schemaName);
     }
 
-    service = module.get<ChatService>(ChatService);
+    chatService = module.get<ChatService>(ChatService);
+    userService = module.get<UserService>(UserService);
   });
 
   afterEach(async () => {
@@ -55,13 +58,13 @@ describe('Chat service', () => {
   });
 
   it('Fetches empty list of chats', async () => {
-    const chats = await service.findAll();
+    const chats = await chatService.findAll();
 
     expect(chats).toHaveLength(0);
   });
 
   it('Creates chat', async () => {
-    const chats = await service.findAll();
+    const chats = await chatService.findAll();
 
     expect(chats).toHaveLength(0);
 
@@ -71,14 +74,41 @@ describe('Chat service', () => {
       type: ChatType.PRIVATE,
     };
 
-    await service.create(createChatData);
+    await chatService.create(createChatData);
 
-    const newChats = await service.findAll();
+    const newChats = await chatService.findAll();
 
     expect(newChats.length).toBe(1);
 
     const newChat = pick(newChats[0], ['title', 'type']);
 
     expect(newChat).toEqual(omit(createChatData, ['memberIds']));
+  });
+
+  it('Adds message to chat', async () => {
+    const createChatData: CreateChatInput = {
+      memberIds: [],
+      title: 'test',
+      type: ChatType.PRIVATE,
+    };
+
+    const newUser = await userService.createUser({
+      phoneNumber: 'test',
+      username: 'test',
+    });
+
+    await chatService.create(createChatData);
+
+    const newChats = await chatService.findAll();
+
+    const newChat = newChats[0]!;
+
+    const testingMessage = 'testing message';
+
+    await chatService.addMessage(newUser.id, newChat?.id, testingMessage);
+
+    const messages = await chatService.messages(newChat.id);
+
+    expect(messages[0]?.text).toEqual(testingMessage);
   });
 });
