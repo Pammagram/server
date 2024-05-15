@@ -192,7 +192,24 @@ export class ChatService {
     return newMessage;
   }
 
+  /**
+   * @deprecated use getMessagesByChatId instead
+   */
   async messages(chatId: number): Promise<MessageDto[]> {
+    return this.messagesRepository.find({
+      where: {
+        chat: {
+          id: chatId,
+        },
+      },
+      relations: {
+        sender: true,
+        chat: true,
+      },
+    });
+  }
+
+  async findMessagesByChatId(chatId: number): Promise<MessageDto[]> {
     return this.messagesRepository.find({
       where: {
         chat: {
