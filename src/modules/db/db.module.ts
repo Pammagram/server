@@ -3,6 +3,8 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { entities } from './entities';
+
 @Module({})
 export class DbModule {
   static forRoot(): DynamicModule {
@@ -24,7 +26,7 @@ export class DbModule {
 
             return {
               type: 'postgres',
-              entities: ['src/**/*.entity.ts'],
+              entities,
               synchronize: true,
               migrationsRun: isDevelopment,
               database: name,
@@ -54,7 +56,7 @@ export class DbModule {
               type: 'postgres',
               synchronize: true,
               migrationsRun: true,
-              entities: ['src/**/*.entity.ts'],
+              entities,
               host: process.env.DATABASE_HOST,
               port: process.env.DATABASE_PORT,
               database: process.env.DATABASE_NAME,
