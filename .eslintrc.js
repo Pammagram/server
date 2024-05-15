@@ -373,6 +373,13 @@ const override = {
       '@typescript-eslint/naming-convention': 'off',
     },
   },
+  tests: {
+    files: ['src/tests/**/*.ts'],
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+      "import/no-extraneous-dependencies": "off"
+    }
+  }
 };
 
 /**

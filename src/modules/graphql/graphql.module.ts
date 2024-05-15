@@ -18,6 +18,7 @@ import { signedCookie } from 'cookie-parser';
         sessionService: SessionService,
         configService: ConfigService<Config>,
       ): ApolloDriverConfig => ({
+        csrfPrevention: !configService.get('app.isTest', { infer: true }),
         autoSchemaFile: true,
         allowBatchedHttpRequests: true,
         context: async (ctx: GqlContext) => {
