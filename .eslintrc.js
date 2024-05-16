@@ -374,12 +374,13 @@ const override = {
     },
   },
   tests: {
-    files: ['**/tests/**', "**/__mocks__/**"],
+    files: ['**/tests/**', "**/__mocks__/**","**/__tests__/**"],
     rules: {
       "@typescript-eslint/ban-ts-comment": "off",
       "import/no-extraneous-dependencies": "off",
       "no-magic-numbers": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off"
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "no-empty": "off"
     }
   }
 };

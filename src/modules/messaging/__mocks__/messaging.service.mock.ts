@@ -4,6 +4,8 @@ import { Provider } from '@nestjs/common';
 
 import { MessagingService } from '../messaging.service';
 
+export const MOCK_VERIFICATION_CODE = 'mocked_verification_code';
+
 export class MockedMessagingServiceClass
   implements PublicInterface<MessagingService>
 {
@@ -20,6 +22,10 @@ export class MockedMessagingServiceClass
     MessagingService['validateVerificationCode']
   >(async (params): Promise<void> => {
     await Promise.resolve();
+
+    if (params.code === MOCK_VERIFICATION_CODE) {
+      return;
+    }
 
     if (params.code !== this.verificationCode) {
       throw new Error('Wrong code');

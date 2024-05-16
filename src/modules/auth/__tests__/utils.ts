@@ -1,6 +1,9 @@
 import { MockedConfigService } from '@modules/common/__mocks__/config.service.mock';
 import { MockedCookieService } from '@modules/cookie/__mocks__/cookie.service.mock';
-import { MockedMessagingService } from '@modules/messaging/__mocks__/messaging.service.mock';
+import {
+  MOCK_VERIFICATION_CODE,
+  MockedMessagingService,
+} from '@modules/messaging/__mocks__/messaging.service.mock';
 import { MockedSessionService } from '@modules/session/__mocks__/session.service.mock';
 import { MockedUserService } from '@modules/user/__mocks__/user.service.mock';
 import { Test } from '@nestjs/testing';
@@ -14,7 +17,7 @@ export const triggerVerifySms = async (resolver: AuthResolver) => {
   const phoneNumber = '+380977777777';
 
   await resolver.verifySms('test ip', mockedExpressResponse, {
-    code: 'test code',
+    code: MOCK_VERIFICATION_CODE,
     device: 'test device',
     phoneNumber,
   });
