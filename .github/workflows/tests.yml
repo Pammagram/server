@@ -13,6 +13,29 @@ env:
   DATABASE_NAME: postgres
  
 jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "./docker-compose.ci.yml"
+          services:
+            database
+          
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+          node-version-file: '.nvmrc'
+      
+      - run: npm ci
+
+      - name: Run tests
+        run: npm run test:e2e
+
   integration:
     runs-on: ubuntu-latest
     steps:
