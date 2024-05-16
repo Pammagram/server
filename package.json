@@ -59,8 +59,6 @@
     "uuid": "9.0.1"
   },
   "devDependencies": {
-    "supertest": "^7.0.0",
-    "supertest-graphql": "^1.1.4",
     "@cspell/eslint-plugin": "7.3.6",
     "@nestjs/cli": "10.0.0",
     "@nestjs/schematics": "10.0.0",
@@ -95,6 +93,8 @@
     "lint-staged": "14.0.1",
     "prettier": "3.0.3",
     "source-map-support": "0.5.21",
+    "supertest": "^7.0.0",
+    "supertest-graphql": "^1.1.4",
     "ts-jest": "^29.1.0",
     "ts-loader": "9.4.3",
     "ts-node": "10.9.2",

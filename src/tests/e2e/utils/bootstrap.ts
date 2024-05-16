@@ -10,6 +10,10 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { AppController } from '@root/app.controller';
+import { MockedCookieServiceClass } from '@root/modules/cookie/__mocks__/cookie.service.mock';
+import { CookieService } from '@root/modules/cookie/cookie.service';
+import { MockedMessagingServiceClass } from '@root/modules/messaging/__mocks__/messaging.service.mock';
+import { MessagingService } from '@root/modules/messaging/messaging.service';
 
 export const initializeApp = async (): Promise<INestApplication> => {
   const moduleRef = await Test.createTestingModule({
@@ -29,7 +33,12 @@ export const initializeApp = async (): Promise<INestApplication> => {
       CookieModule,
     ],
     controllers: [AppController],
-  }).compile();
+  })
+    .overrideProvider(MessagingService)
+    .useClass(MockedMessagingServiceClass)
+    .overrideProvider(CookieService)
+    .useClass(MockedCookieServiceClass)
+    .compile();
 
   const app = moduleRef.createNestApplication();
 
