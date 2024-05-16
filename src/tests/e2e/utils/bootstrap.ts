@@ -1,4 +1,4 @@
-import { config, configValidationSchema } from '@config';
+import { Config, config, configValidationSchema } from '@config';
 import { AuthModule } from '@modules/auth/module';
 import { ChatModule } from '@modules/chat/chat.module';
 import { CookieModule } from '@modules/cookie/cookie.module';
@@ -7,13 +7,12 @@ import { GraphqlModule } from '@modules/graphql/graphql.module';
 import { SessionModule } from '@modules/session';
 import { UserModule } from '@modules/user/user.module';
 import { INestApplication } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { AppController } from '@root/app.controller';
-import { MockedCookieServiceClass } from '@root/modules/cookie/__mocks__/cookie.service.mock';
-import { CookieService } from '@root/modules/cookie/cookie.service';
 import { MockedMessagingServiceClass } from '@root/modules/messaging/__mocks__/messaging.service.mock';
 import { MessagingService } from '@root/modules/messaging/messaging.service';
+import * as cookieParser from 'cookie-parser';
 
 export const initializeApp = async (): Promise<INestApplication> => {
   const moduleRef = await Test.createTestingModule({
@@ -36,11 +35,17 @@ export const initializeApp = async (): Promise<INestApplication> => {
   })
     .overrideProvider(MessagingService)
     .useClass(MockedMessagingServiceClass)
-    .overrideProvider(CookieService)
-    .useClass(MockedCookieServiceClass)
     .compile();
 
   const app = moduleRef.createNestApplication();
+
+  const configService = app.get<ConfigService<Config>>(ConfigService);
+
+  const cookieSecret = configService.getOrThrow('security.cookieSecret', {
+    infer: true,
+  });
+
+  app.use(cookieParser(cookieSecret));
 
   app.enableCors({
     origin: true,
