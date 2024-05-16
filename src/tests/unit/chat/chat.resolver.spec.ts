@@ -1,21 +1,14 @@
 import { config, configValidationSchema } from '@config';
 import { describe } from '@jest/globals';
-import { ChatModule } from '@modules/chat/chat.module';
-import { DbModule } from '@modules/db/db.module';
 import { INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
-import { AuthGuard } from '@root/modules/auth/guards';
-import {
-  MockedChatService,
-  MockedChatServiceClass,
-} from '@root/modules/chat/__mocks__/chat.service.mock';
+import { MockedChatService } from '@root/modules/chat/__mocks__/chat.service.mock';
 import { ChatService } from '@root/modules/chat/chat.service';
 import { ChatType } from '@root/modules/chat/entities';
 import { ChatResolver } from '@root/modules/chat/resolvers/chats';
 import { MessageResolver } from '@root/modules/chat/resolvers/messages';
-import { MockedUserServiceClass } from '@root/modules/user/__mocks__/user.service.mock';
-import { UserService } from '@root/modules/user/user.service';
+import { MockedUserService } from '@root/modules/user/__mocks__/user.service.mock';
 
 describe('Chat resolver', () => {
   let app: INestApplication;
@@ -32,18 +25,14 @@ describe('Chat resolver', () => {
           validationSchema: configValidationSchema,
           envFilePath: `.env.${process.env.NODE_ENV}`,
         }),
-        DbModule.forRoot(),
-        ChatModule,
       ],
-      providers: [MockedChatService],
-    })
-      .overrideProvider(ChatService)
-      .useClass(MockedChatServiceClass)
-      .overrideProvider(UserService)
-      .useClass(MockedUserServiceClass)
-      .overrideGuard(AuthGuard)
-      .useValue({ canActive: () => true })
-      .compile();
+      providers: [
+        MessageResolver,
+        ChatResolver,
+        MockedChatService,
+        MockedUserService,
+      ],
+    }).compile();
 
     app = moduleRef.createNestApplication();
 
