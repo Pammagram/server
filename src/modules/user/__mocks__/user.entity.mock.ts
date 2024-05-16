@@ -4,7 +4,7 @@ export const mockedUser: User = {
   chats: [],
   id: 0,
   lastActiveInMs: new Date(),
-  phoneNumber: '',
+  phoneNumber: 'mockedPhoneNumber',
   sessions: [],
-  username: 'test',
+  username: 'mockUser',
 };

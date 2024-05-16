@@ -380,7 +380,8 @@ const override = {
       "import/no-extraneous-dependencies": "off",
       "no-magic-numbers": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
-      "no-empty": "off"
+      "no-empty": "off",
+      "@typescript-eslint/no-unsafe-argument": "off"
     }
   }
 };

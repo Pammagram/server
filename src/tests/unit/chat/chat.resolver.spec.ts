@@ -13,12 +13,14 @@ import {
 import { ChatService } from '@root/modules/chat/chat.service';
 import { ChatType } from '@root/modules/chat/entities';
 import { ChatResolver } from '@root/modules/chat/resolvers/chats';
+import { MessageResolver } from '@root/modules/chat/resolvers/messages';
 import { MockedUserServiceClass } from '@root/modules/user/__mocks__/user.service.mock';
 import { UserService } from '@root/modules/user/user.service';
 
 describe('Chat resolver', () => {
   let app: INestApplication;
   let chatResolver: ChatResolver;
+  let messageResolver: MessageResolver;
   let chatService: ChatService;
 
   beforeAll(async () => {
@@ -47,12 +49,13 @@ describe('Chat resolver', () => {
 
     chatResolver = app.get<ChatResolver>(ChatResolver);
     chatService = app.get<ChatService>(ChatService);
+    messageResolver = app.get<MessageResolver>(MessageResolver);
 
     return app;
   });
 
   describe('Create chat', () => {
-    test('Triggers correct chat service', async () => {
+    test('Triggers create method', async () => {
       await chatResolver.createChat({
         memberIds: [],
         title: 'test',
@@ -60,6 +63,20 @@ describe('Chat resolver', () => {
       });
 
       expect(chatService.create).toHaveBeenCalled();
+    });
+  });
+
+  describe('Send message', () => {
+    test('Triggers addMessage method', async () => {
+      await messageResolver.addMessage(
+        {
+          chatId: 0,
+          text: 'test',
+        },
+        'test',
+      );
+
+      expect(chatService.addMessage).toHaveBeenCalled();
     });
   });
 });
