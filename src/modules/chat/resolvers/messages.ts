@@ -1,18 +1,18 @@
 import { AuthGuard } from '@modules/auth/guards';
-import { GqlContext, Input } from '@modules/common/decorators';
+import { Input } from '@modules/common/decorators';
 import { SessionId } from '@modules/session';
 import { UserService } from '@modules/user/user.service';
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 
+import { messageAddedFilter } from '../chat.filter';
 import { ChatService } from '../chat.service';
 import {
   AddMessageInput,
   AddMessageOutput,
   MESSAGE_ADDED,
   MessageAddedOutput,
-  MessageAddedPayload,
   MessagesInput,
   MessagesOutput,
 } from '../dto';
@@ -29,23 +29,7 @@ export class MessageResolver {
 
   @UseGuards(AuthGuard)
   @Subscription(() => MessageAddedOutput, {
-    filter: (payload: MessageAddedPayload, _variables, context: GqlContext) => {
-      const {
-        messageAdded: { data },
-      } = payload;
-
-      const {
-        chat: { members },
-      } = data;
-
-      const userId = context.extra?.session?.user.id;
-
-      if (members.some((member) => member.id === userId)) {
-        return true;
-      }
-
-      return false;
-    },
+    filter: messageAddedFilter,
   })
   messageAdded() {
     return pubSub.asyncIterator(MESSAGE_ADDED);

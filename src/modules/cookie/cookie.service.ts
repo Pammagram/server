@@ -19,6 +19,6 @@ export class CookieService {
   clearCookie(response: Response, params: ClearCookieParams) {
     const { name } = params;
 
-    response.cookie(name, null);
+    response.clearCookie(name);
   }
 }
