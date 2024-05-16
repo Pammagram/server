@@ -37,7 +37,7 @@ export const SignedCookies = createParamDecorator(
       GqlExecutionContext.create(ctx).getContext<GqlContext>().req;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- We need to access property we don't know beforehand
-    const cookies = request.signedCookies[cookieName] as string | undefined;
+    const cookies = request.signedCookies?.[cookieName] as string | undefined;
 
     return cookies;
   },
