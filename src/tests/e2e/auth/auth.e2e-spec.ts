@@ -89,6 +89,16 @@ describe('Authentication flow', () => {
     expect(logoutCookies[SESSION_ID]?.value).toBeFalsy();
   });
 
+  it('Log out fails if unauthenticated', async () => {
+    const server = app.getHttpServer();
+
+    const { errors } = await gqlRequest<{ logout: LogoutOutput }>(
+      server,
+    ).mutate(createLogoutMutation());
+
+    expect(errors?.length).toBeGreaterThan(0);
+  });
+
   afterAll(async () => {
     await app.close();
   });
