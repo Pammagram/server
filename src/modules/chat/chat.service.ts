@@ -1,4 +1,4 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { Injectable, Logger, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
@@ -10,6 +10,8 @@ import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ChatService {
+  private logger: Logger = new Logger(ChatService.name);
+
   constructor(
     @InjectRepository(ChatEntity)
     private chatsRepository: Repository<ChatEntity>,
@@ -175,21 +177,27 @@ export class ChatService {
     chatId: number,
     text: string,
   ): Promise<MessageDto> {
-    const data = await this.messagesRepository.insert({
-      chat: {
-        id: chatId,
-      },
-      sender: {
-        id: senderId,
-      },
-      text,
-    });
+    try {
+      const data = await this.messagesRepository.insert({
+        chat: {
+          id: chatId,
+        },
+        sender: {
+          id: senderId,
+        },
+        text,
+      });
 
-    const insertedId = data.identifiers[0]?.['id'] as number;
+      const insertedId = data.identifiers[0]?.['id'] as number;
 
-    const newMessage = await this.findMessageByIdOrFail(insertedId);
+      const newMessage = await this.findMessageByIdOrFail(insertedId);
 
-    return newMessage;
+      return newMessage;
+    } catch (error) {
+      this.logger.error(error);
+
+      throw error;
+    }
   }
 
   /**
