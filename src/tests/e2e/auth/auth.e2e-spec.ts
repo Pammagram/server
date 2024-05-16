@@ -55,7 +55,7 @@ describe('Authentication flow', () => {
     expect(errors?.length).toBeGreaterThan(0);
   });
 
-  it('Logs out successfully', async () => {
+  it('Logs out successfully and clears cookie when authenticated', async () => {
     const server = app.getHttpServer();
 
     await gqlRequest<{ sendSms: SendSmsOutput }>(server)
@@ -75,12 +75,18 @@ describe('Authentication flow', () => {
 
     const sessionId = cookies[SESSION_ID]?.value;
 
-    const { data } = await gqlRequest<{ logout: LogoutOutput }>(server)
+    const { data, response: logoutResponse } = await gqlRequest<{
+      logout: LogoutOutput;
+    }>(server)
       .mutate(createLogoutMutation())
       .set('Cookie', [`${SESSION_ID}=${sessionId}`])
       .expectNoErrors();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any -- types mismatch from supertest
+    const logoutCookies = parse(logoutResponse as any, { map: true });
+
     expect(data).toBeTruthy();
+    expect(logoutCookies[SESSION_ID]?.value).toBeFalsy();
   });
 
   afterAll(async () => {
