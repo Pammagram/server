@@ -111,4 +111,31 @@ describe('Chat service', () => {
 
     expect(messages[0]?.text).toEqual(testingMessage);
   });
+
+  it('Fetches last message for a chat', async () => {
+    const newUser = await userService.createUser({
+      phoneNumber: 'test',
+      username: 'test',
+    });
+
+    const createChatData: CreateChatInput = {
+      memberIds: [],
+      title: 'test',
+      type: ChatType.PRIVATE,
+    };
+
+    const newChat = await chatService.create(createChatData);
+
+    await chatService.addMessage(newUser.id, newChat?.id, 'first message');
+
+    const secondMessage = await chatService.addMessage(
+      newUser.id,
+      newChat?.id,
+      'second message',
+    );
+
+    const message = await chatService.findChatLastMessage(newChat.id);
+
+    expect(message?.text).toEqual(secondMessage.text);
+  });
 });
