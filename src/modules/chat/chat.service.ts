@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Maybe } from 'graphql/jsutils/Maybe';
 import { In, Repository } from 'typeorm';
 
 import { ChatDto, CreateChatInput, EditChatInput, MessageDto } from './dto';
@@ -239,6 +240,20 @@ export class ChatService {
           members: true,
         },
         sender: true,
+      },
+    });
+  }
+
+  async findChatLastMessage(chatId: number): Promise<Maybe<MessageDto>> {
+    return this.messagesRepository.findOne({
+      where: { chat: { id: chatId } },
+      relations: {
+        sender: true,
+      },
+      order: {
+        createdAt: {
+          direction: 'desc',
+        },
       },
     });
   }
