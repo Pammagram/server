@@ -68,4 +68,14 @@ export class UserService {
 
     return user;
   }
+
+  async findUsersByPhoneNumber(phoneNumbers: string[]): Promise<UserDto[]> {
+    const users = await this.usersRepository.find({
+      where: {
+        phoneNumber: In(phoneNumbers),
+      },
+    });
+
+    return users;
+  }
 }

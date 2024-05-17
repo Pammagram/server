@@ -12,6 +12,8 @@ import {
   UpdateUserOutput,
   UsersOutput,
 } from './dto';
+import { UsersByPhoneNumbersInput } from './graphql/queries/usersByPhoneNumbers/input';
+import { UsersByPhoneNumbersOutput } from './graphql/queries/usersByPhoneNumbers/output';
 import { UserService } from './user.service';
 
 @Resolver()
@@ -62,6 +64,20 @@ export class UserResolver {
 
     return {
       data: updatedUser,
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @Query(() => UsersByPhoneNumbersOutput)
+  async usersByPhoneNumbers(
+    @Input() input: UsersByPhoneNumbersInput,
+  ): Promise<UsersByPhoneNumbersOutput> {
+    const users = await this.userService.findUsersByPhoneNumber(
+      input.phoneNumbers,
+    );
+
+    return {
+      users,
     };
   }
 }
