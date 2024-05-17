@@ -2,8 +2,8 @@ import { GqlContext } from '@modules/common/decorators';
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
     const session = ctx?.extra?.session;
 
     if (!session) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException();
     }
 
     return true;
