@@ -10,6 +10,10 @@ import {
   RemoveSessionOutput,
   SessionDto,
 } from './dto';
+import {
+  SetMessagingTokenInput,
+  SetMessagingTokenOutput,
+} from './dto/mutations/set-messaging-token';
 import { SessionService } from './service';
 
 @UseGuards(AuthGuard)
@@ -23,6 +27,20 @@ export class SessionResolver {
 
     return {
       data,
+    };
+  }
+
+  @Mutation(() => SetMessagingTokenOutput)
+  async setMessagingToken(
+    @Session() session: SessionDto,
+    @Input() input: SetMessagingTokenInput,
+  ): Promise<SetMessagingTokenOutput> {
+    const isSuccess = await this.sessionService.updateById(session.id, {
+      messagingToken: input.messagingToken,
+    });
+
+    return {
+      data: isSuccess,
     };
   }
 

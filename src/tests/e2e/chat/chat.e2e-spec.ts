@@ -1,5 +1,6 @@
 import { Config, config, configValidationSchema } from '@config';
 import { ChatModule } from '@modules/chat/chat.module';
+import { ChatType } from '@modules/chat/constants/chat-type';
 import { DbModule } from '@modules/db/db.module';
 import { GraphqlModule } from '@modules/graphql/graphql.module';
 import { INestApplication } from '@nestjs/common';
@@ -13,7 +14,6 @@ import {
   AddMessageOutput,
   CreateChatOutput,
 } from '@root/modules/chat/dto';
-import { ChatType } from '@root/modules/chat/entities';
 import { SessionModule, SessionService } from '@root/modules/session';
 import { UserModule } from '@root/modules/user/user.module';
 import { UserService } from '@root/modules/user/user.service';

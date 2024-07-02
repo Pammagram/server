@@ -8,20 +8,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export enum ChatType {
-  PRIVATE = 'private',
-  GROUP = 'group',
-}
+import { ChatType } from '../constants/chat-type';
+import { Chat } from '../types/chat';
 
 registerEnumType(ChatType, {
   name: 'ChatType',
 });
-
-export type Chat = {
-  id: number;
-  title: string;
-  type: ChatType;
-};
 
 @Entity()
 export class ChatEntity implements Chat {

@@ -1,10 +1,13 @@
+import { NotificationService } from '@modules/notification/notification.service';
+import { UserEntity } from '@modules/user/entities';
 import { Injectable, Logger, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { In, Repository } from 'typeorm';
 
+import { ChatType } from './constants/chat-type';
 import { ChatDto, CreateChatInput, EditChatInput, MessageDto } from './dto';
-import { ChatEntity, ChatType } from './entities';
+import { ChatEntity } from './entities';
 import { MessageEntity } from './entities/message.entity';
 
 import { UserService } from '../user/user.service';
@@ -19,6 +22,7 @@ export class ChatService {
     @InjectRepository(MessageEntity)
     private messagesRepository: Repository<MessageEntity>,
     private readonly userService: UserService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findAll(): Promise<ChatDto[]> {
@@ -173,25 +177,49 @@ export class ChatService {
     return true;
   }
 
-  async addMessage(
+  async createMessage(senderId: number, chatId: number, text: string) {
+    const data = await this.messagesRepository.insert({
+      chat: {
+        id: chatId,
+      },
+      sender: {
+        id: senderId,
+      },
+      text,
+    });
+
+    const insertedId = data.identifiers[0]?.['id'] as number;
+
+    return insertedId;
+  }
+
+  async notifyChatMembers(senderId: number, chatId: number, text: string) {
+    let members = await this.findChatMembersByChatId(chatId);
+    // * sender is guaranteed to be chat member
+    const sender = members.find((member) => member.id === senderId)!;
+
+    members = members.filter((member) => member.id !== senderId);
+
+    await this.notificationService.sendNotificationsByUserIds(
+      members.map((member) => member.id),
+      {
+        body: text,
+        title: sender?.username ?? sender?.phoneNumber,
+      },
+    );
+  }
+
+  async sendMessage(
     senderId: number,
     chatId: number,
     text: string,
   ): Promise<MessageDto> {
+    const messageId = await this.createMessage(senderId, chatId, text);
+
+    await this.notifyChatMembers(senderId, chatId, text);
+
     try {
-      const data = await this.messagesRepository.insert({
-        chat: {
-          id: chatId,
-        },
-        sender: {
-          id: senderId,
-        },
-        text,
-      });
-
-      const insertedId = data.identifiers[0]?.['id'] as number;
-
-      const newMessage = await this.findMessageByIdOrFail(insertedId);
+      const newMessage = await this.findMessageByIdOrFail(messageId);
 
       return newMessage;
     } catch (error) {
@@ -200,6 +228,11 @@ export class ChatService {
       throw error;
     }
   }
+
+  /**
+   * @deprecated use sendMessage instead
+   */
+  addMessage = this.sendMessage;
 
   /**
    * @deprecated use getMessagesByChatId instead
@@ -256,5 +289,18 @@ export class ChatService {
         },
       },
     });
+  }
+
+  async findChatMembersByChatId(chatId: number): Promise<UserEntity[]> {
+    const chats = await this.chatsRepository.find({
+      where: { id: chatId },
+      relations: {
+        members: true,
+      },
+    });
+
+    const members = chats.map((chat) => chat.members).flat();
+
+    return members;
   }
 }

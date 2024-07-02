@@ -1,3 +1,4 @@
+import { NotificationModule } from '@modules/notification/notification.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -10,7 +11,11 @@ import { MessageResolver } from './resolvers/messages';
 import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatEntity, MessageEntity]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([ChatEntity, MessageEntity]),
+    UserModule,
+    NotificationModule,
+  ],
   providers: [ChatResolver, MessageResolver, ChatFieldsResolver, ChatService],
 })
 export class ChatModule {}

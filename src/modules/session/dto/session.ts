@@ -15,6 +15,9 @@ export class SessionDto {
   @Field(() => Date)
   lastVisitInMs: Date;
 
+  @Field(() => String, { nullable: true })
+  messagingToken?: string;
+
   // ! We should not give user access to sessionId because it's not safe
   sessionId: string;
 

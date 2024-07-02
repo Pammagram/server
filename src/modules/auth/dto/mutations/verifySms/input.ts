@@ -10,4 +10,7 @@ export class VerifySmsInput {
 
   @Field(() => String)
   device: string;
+
+  @Field(() => String, { nullable: true })
+  messagingToken?: string;
 }

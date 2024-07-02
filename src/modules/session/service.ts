@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { prettify } from '@core/utils/prettify';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { SessionDto } from './dto';
@@ -10,19 +11,44 @@ import { UserEntity } from '../user/entities';
 
 @Injectable()
 export class SessionService {
+  private readonly logger = new Logger(SessionService.name);
+
   constructor(
     @InjectRepository(SessionEntity)
     private sessionRepository: Repository<SessionEntity>,
   ) {}
 
   async findByUserId(userId: number): Promise<SessionDto[]> {
-    return this.sessionRepository.find({
+    const sessions = await this.sessionRepository.find({
       where: {
         user: {
           id: userId,
         },
       },
     });
+
+    this.logger.debug(`sessions for user ${userId}`, sessions);
+
+    return sessions;
+  }
+
+  async findMessagingTokensByUserIds(
+    userIds: number[],
+  ): Promise<Pick<SessionDto, 'messagingToken'>[]> {
+    const sessions = await this.sessionRepository.find({
+      where: {
+        user: {
+          id: In(userIds),
+        },
+      },
+      select: {
+        messagingToken: true,
+      },
+    });
+
+    this.logger.debug(`sessions for user ${prettify(userIds)}`, sessions);
+
+    return sessions;
   }
 
   async findByIdOrFail(id: number): Promise<SessionDto> {
@@ -34,23 +60,21 @@ export class SessionService {
   }
 
   async createSession(
-    data: Pick<SessionDto, 'ip' | 'device'> & {
+    data: Pick<SessionDto, 'ip' | 'device' | 'messagingToken'> & {
       user: UserEntity;
       rememberMe?: boolean;
     },
   ): Promise<SessionEntity> {
-    const { ip, device, user } = data;
-
-    const sessionId = uuid();
-
     const sessionData = {
-      sessionId,
-      user,
-      ip,
-      device,
+      ...data,
+      sessionId: uuid(),
     } satisfies Partial<SessionDto>;
 
-    return this.sessionRepository.save(sessionData);
+    const newSession = await this.sessionRepository.save(sessionData);
+
+    this.logger.debug('session created', newSession);
+
+    return newSession;
   }
 
   removeBySessionId(sessionId: string) {
@@ -106,13 +130,16 @@ export class SessionService {
     return this.findBySessionByIdOrFail(sessionId);
   }
 
-  async updateBySessionId(
-    sessionId: string,
+  async updateById(
+    sessionId: number,
     data: Partial<Omit<SessionEntity, 'id'>>,
   ): Promise<boolean> {
+    this.logger.debug('session id', sessionId);
+    this.logger.debug('data', data);
+
     await this.sessionRepository.update(
       {
-        sessionId,
+        id: sessionId,
       },
       data,
     );

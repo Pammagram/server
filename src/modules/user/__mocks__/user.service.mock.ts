@@ -17,7 +17,7 @@ export class MockedUserServiceClass implements PublicInterface<UserService> {
   findByUserIds = jest.fn<UserService['findByUserIds']>();
 
   findUserBySessionIdOrFail = jest.fn<UserService['findUserBySessionIdOrFail']>(
-    async () => {
+    async (_sessionId: string) => {
       await Promise.resolve();
 
       return mockedUser;

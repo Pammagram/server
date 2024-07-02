@@ -1,11 +1,11 @@
 import { config, configValidationSchema } from '@config';
 import { describe } from '@jest/globals';
+import { ChatType } from '@modules/chat/constants/chat-type';
 import { INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { MockedChatService } from '@root/modules/chat/__mocks__/chat.service.mock';
 import { ChatService } from '@root/modules/chat/chat.service';
-import { ChatType } from '@root/modules/chat/entities';
 import { ChatResolver } from '@root/modules/chat/resolvers/chats';
 import { MessageResolver } from '@root/modules/chat/resolvers/messages';
 import { MockedUserService } from '@root/modules/user/__mocks__/user.service.mock';

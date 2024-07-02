@@ -46,7 +46,7 @@ export class AuthResolver {
     @Response() response: ExpressResponse,
     @Input() input: VerifySmsInput,
   ): Promise<VerifySmsOutput> {
-    const { phoneNumber, code, device } = input;
+    const { phoneNumber, code } = input;
 
     try {
       await this.messagingService.validateVerificationCode({
@@ -62,9 +62,9 @@ export class AuthResolver {
     const user = await this.userService.findByPhoneNumberOrFail(phoneNumber);
 
     const { sessionId } = await this.sessionService.createSession({
-      device,
-      ip,
+      ...input,
       user,
+      ip,
     });
 
     this.cookieService.setCookie(response, {
