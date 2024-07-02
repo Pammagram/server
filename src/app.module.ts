@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { CookieModule } from './modules/cookie/cookie.module';
+import { FirebaseModule } from './modules/firebase/firebase.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CookieModule } from './modules/cookie/cookie.module';
     SessionModule,
     ChatModule,
     CookieModule,
+    FirebaseModule,
   ],
   controllers: [AppController],
 })

@@ -15,11 +15,11 @@
     "baseUrl": "./src",
     "incremental": true,
     "paths": {
-      "@root/*": ["*"],
       "@modules/*": ["modules/*"],
       "@config": ["config"],
       "@config/*": ["config/*"],
       "@core/*": ["core/*"],
+      "@root/*": ["*"],
     }
   }
 }
