@@ -9,6 +9,8 @@ services:
       target: development
     volumes:
       - ./src:/server/src
+      - ./env.d.ts:/server/env.d.ts
+      
     command: npm run start:dev
     ports:
       - ${PORT}:${PORT}

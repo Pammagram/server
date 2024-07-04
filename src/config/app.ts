@@ -8,6 +8,7 @@ export enum NodeEnv {
 
 export const appValidationSchema = Joi.object({
   PORT: Joi.number(),
+  ENABLE_SMS: Joi.boolean(),
 });
 
 export const appConfig = () => ({
@@ -15,4 +16,5 @@ export const appConfig = () => ({
   isDevelopment: process.env.NODE_ENV === NodeEnv.Development,
   isProduction: process.env.NODE_ENV === NodeEnv.Production,
   isTest: process.env.NODE_ENV === NodeEnv.Test,
+  isSmsEnabled: process.env.ENABLE_SMS === 'true',
 });
