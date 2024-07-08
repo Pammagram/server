@@ -2,11 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { MessageDto } from '../message.dto';
 
-/**
- * @deprecated Use SendMessageOutput
- */
 @ObjectType()
-export class AddMessageOutput {
+export class SendMessageOutput {
   @Field(() => MessageDto)
   data: MessageDto;
 }

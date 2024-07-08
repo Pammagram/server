@@ -131,18 +131,13 @@ export class SessionService {
   }
 
   async updateById(
-    sessionId: number,
+    id: number,
     data: Partial<Omit<SessionEntity, 'id'>>,
   ): Promise<boolean> {
-    this.logger.debug('session id', sessionId);
+    this.logger.debug('session id', id);
     this.logger.debug('data', data);
 
-    await this.sessionRepository.update(
-      {
-        id: sessionId,
-      },
-      data,
-    );
+    await this.sessionRepository.update({ id }, data);
 
     return true;
   }

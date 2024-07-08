@@ -12,6 +12,7 @@ import { MessageEntity } from './entities/message.entity';
 
 import { UserService } from '../user/user.service';
 
+// TODO split service by purposes
 @Injectable()
 export class ChatService {
   private logger: Logger = new Logger(ChatService.name);
@@ -228,11 +229,6 @@ export class ChatService {
       throw error;
     }
   }
-
-  /**
-   * @deprecated use sendMessage instead
-   */
-  addMessage = this.sendMessage;
 
   /**
    * @deprecated use getMessagesByChatId instead

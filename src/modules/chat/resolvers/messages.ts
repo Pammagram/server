@@ -16,8 +16,9 @@ import {
   MessagesInput,
   MessagesOutput,
 } from '../dto';
+import { SendMessageInput, SendMessageOutput } from '../dto/sendMessage';
 
-// TODO sub module
+// TODO sub module for pubsub
 export const pubSub = new PubSub();
 
 @Resolver()
@@ -35,7 +36,9 @@ export class MessageResolver {
     return pubSub.asyncIterator(MESSAGE_ADDED);
   }
 
-  @Mutation(() => AddMessageOutput)
+  @Mutation(() => AddMessageOutput, {
+    deprecationReason: 'Use sendMessage instead',
+  })
   async addMessage(
     @Input() input: AddMessageInput,
     @SessionId() sessionId: string,
@@ -44,8 +47,27 @@ export class MessageResolver {
 
     const user = await this.useService.findUserBySessionIdOrFail(sessionId);
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention -- we need to conform to conventions in resolvers
-    const data = await this.chatService.addMessage(user.id, chatId, text);
+    const data = await this.chatService.sendMessage(user.id, chatId, text);
+
+    void pubSub.publish(MESSAGE_ADDED, {
+      [MESSAGE_ADDED]: {
+        data,
+      },
+    });
+
+    return { data };
+  }
+
+  @Mutation(() => SendMessageOutput)
+  async sendMessage(
+    @Input() input: SendMessageInput,
+    @SessionId() sessionId: string,
+  ): Promise<SendMessageOutput> {
+    const { chatId, text } = input;
+
+    const user = await this.useService.findUserBySessionIdOrFail(sessionId);
+
+    const data = await this.chatService.sendMessage(user.id, chatId, text);
 
     void pubSub.publish(MESSAGE_ADDED, {
       [MESSAGE_ADDED]: {

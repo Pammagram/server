@@ -1,3 +1,4 @@
+/* eslint-disable @cspell/spellchecker  --  TODO remove */
 import { FIREBASE_APP } from '@modules/firebase/firebase.module';
 import { SessionService } from '@modules/session';
 import { Inject, Injectable, Logger } from '@nestjs/common';
@@ -29,15 +30,50 @@ export class NotificationService {
 
     const tokens = sessions
       .map((session) => session.messagingToken)
-      .filter((token) => typeof token !== 'undefined') as string[];
+      .filter((token) => typeof token === 'string')
+      .filter((token) => token.length);
 
-    const response = await this.firebaseApp.messaging().sendEachForMulticast({
-      tokens,
-      notification: notificationParams,
-    });
+    this.logger.debug('tokens', tokens);
 
-    this.logger.debug('response', response);
+    // * not all sessions have fc token for now
+    if (tokens.length) {
+      const response = await this.firebaseApp.messaging().sendEachForMulticast({
+        tokens,
+        data: {
+          notifee: JSON.stringify({
+            body: notificationParams.body,
+            title: notificationParams.title,
+            android: {
+              channelId: 'default',
+              actions: [
+                {
+                  title: 'Mark as Read',
+                  pressAction: {
+                    id: 'read',
+                  },
+                },
+                {
+                  title: 'Reply',
+                  pressAction: {
+                    id: 'reply',
+                  },
+                  input: true,
+                },
+              ],
+            },
+          }),
+        },
+        android: {
+          ttl: 604800, // 7 days in seconds
+          priority: 'high',
+        },
+      });
 
-    return response.responses;
+      this.logger.debug('response', response);
+
+      return response.responses;
+    }
+
+    return [];
   }
 }
