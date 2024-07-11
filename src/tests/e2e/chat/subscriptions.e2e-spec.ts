@@ -91,7 +91,7 @@ describe('Chat flow', () => {
       data: {
         chat: { id: 0, members: [], title: 'test', type: ChatType.GROUP },
         createdAt: new Date(),
-        id: 0,
+        id: '0',
         sender: mockedUser,
         text: 'test',
         updatedAt: new Date(),

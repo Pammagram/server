@@ -5,11 +5,11 @@ import { Provider } from '@nestjs/common';
 import { ChatService } from '../chat.service';
 
 export class MockedChatServiceClass
-  implements PublicInterface<Pick<ChatService, 'create' | 'addMessage'>>
+  implements PublicInterface<Pick<ChatService, 'create' | 'sendMessage'>>
 {
   create = jest.fn<ChatService['create']>();
 
-  addMessage = jest.fn<ChatService['addMessage']>();
+  sendMessage = jest.fn<ChatService['sendMessage']>();
 }
 
 export const MockedChatService: Provider = {

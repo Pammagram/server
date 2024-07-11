@@ -11,6 +11,7 @@ import { UserService } from '@modules/user/user.service';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { omit, pick } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 import { createNewSchema, dropSchema } from '../utils';
 
@@ -105,9 +106,14 @@ describe('Chat service', () => {
 
     const testingMessage = 'testing message';
 
-    await chatService.addMessage(newUser.id, newChat?.id, testingMessage);
+    await chatService.sendMessage({
+      senderId: newUser.id,
+      chatId: newChat?.id,
+      text: testingMessage,
+      id: uuidv4(),
+    });
 
-    const messages = await chatService.messages(newChat.id);
+    const messages = await chatService.findMessagesByChatId(newChat.id);
 
     expect(messages[0]?.text).toEqual(testingMessage);
   });
@@ -126,13 +132,19 @@ describe('Chat service', () => {
 
     const newChat = await chatService.create(createChatData);
 
-    await chatService.addMessage(newUser.id, newChat?.id, 'first message');
+    await chatService.sendMessage({
+      senderId: newUser.id,
+      chatId: newChat?.id,
+      text: 'first message',
+      id: uuidv4(),
+    });
 
-    const secondMessage = await chatService.addMessage(
-      newUser.id,
-      newChat?.id,
-      'second message',
-    );
+    const secondMessage = await chatService.sendMessage({
+      senderId: newUser.id,
+      chatId: newChat?.id,
+      text: 'second message',
+      id: uuidv4(),
+    });
 
     const message = await chatService.findChatLastMessage(newChat.id);
 

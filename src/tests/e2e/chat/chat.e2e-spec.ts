@@ -1,6 +1,7 @@
 import { Config, config, configValidationSchema } from '@config';
 import { ChatModule } from '@modules/chat/chat.module';
 import { ChatType } from '@modules/chat/constants/chat-type';
+import { SendMessageInput } from '@modules/chat/dto/sendMessage';
 import { DbModule } from '@modules/db/db.module';
 import { GraphqlModule } from '@modules/graphql/graphql.module';
 import { INestApplication } from '@nestjs/common';
@@ -9,11 +10,7 @@ import { Test } from '@nestjs/testing';
 import { AppController } from '@root/app.controller';
 import { SESSION_ID } from '@root/modules/auth/constants';
 import { AuthGuard } from '@root/modules/auth/guards';
-import {
-  AddMessageInput,
-  AddMessageOutput,
-  CreateChatOutput,
-} from '@root/modules/chat/dto';
+import { CreateChatOutput } from '@root/modules/chat/dto';
 import { SessionModule, SessionService } from '@root/modules/session';
 import { UserModule } from '@root/modules/user/user.module';
 import { UserService } from '@root/modules/user/user.service';
@@ -122,17 +119,17 @@ describe('Chat flow', () => {
       })
       .expectNoErrors();
 
-    const { data } = await gqlRequest<{ addMessage: AddMessageOutput }>(server)
+    const { data } = await gqlRequest<{ sendMessage: SendMessageInput }>(server)
       .mutate(createAddMessageMutation())
       .variables({
         input: {
           chatId: chat!.createChat.data.id,
           text: 'test',
-        } satisfies AddMessageInput,
+        } satisfies SendMessageInput,
       })
       .set('Cookie', [`${SESSION_ID}=${session.sessionId}`])
       .expectNoErrors();
 
-    expect(data?.addMessage.data).toBeDefined();
+    expect(data?.sendMessage).toBeDefined();
   });
 });

@@ -57,7 +57,7 @@ describe('Chat resolver', () => {
 
   describe('Send message', () => {
     test('Triggers addMessage method', async () => {
-      await messageResolver.addMessage(
+      await messageResolver.sendMessage(
         {
           chatId: 0,
           text: 'test',
@@ -65,7 +65,7 @@ describe('Chat resolver', () => {
         'test',
       );
 
-      expect(chatService.addMessage).toHaveBeenCalled();
+      expect(chatService.sendMessage).toHaveBeenCalled();
     });
   });
 });
