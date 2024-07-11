@@ -1,10 +1,8 @@
 import { Config } from '@config';
 import { Input, Ip, Response } from '@modules/common/decorators';
 import { CookieService } from '@modules/cookie/cookie.service';
-import { MessagingService } from '@modules/messaging/messaging.service';
 import { SessionId, SessionService } from '@modules/session';
-import { UserService } from '@modules/user/user.service';
-import { NotFoundException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { Response as ExpressResponse } from 'express';
@@ -24,9 +22,7 @@ import { AuthGuard } from './guards';
 export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService,
     private readonly sessionService: SessionService,
-    private readonly messagingService: MessagingService,
     private readonly cookieService: CookieService,
     private readonly configService: ConfigService<Config>,
   ) {}
@@ -46,25 +42,13 @@ export class AuthResolver {
     @Response() response: ExpressResponse,
     @Input() input: VerifySmsInput,
   ): Promise<VerifySmsOutput> {
-    const { phoneNumber, code, device } = input;
-
-    try {
-      await this.messagingService.validateVerificationCode({
-        phoneNumber,
-        code,
-      });
-    } catch (error) {
-      throw new NotFoundException(
-        'Verification code not found. Try sending sms again',
-      );
-    }
-
-    const user = await this.userService.findByPhoneNumberOrFail(phoneNumber);
+    const { phoneNumber, code } = input;
+    const user = await this.authService.verifySms(phoneNumber, code);
 
     const { sessionId } = await this.sessionService.createSession({
-      device,
-      ip,
+      ...input,
       user,
+      ip,
     });
 
     this.cookieService.setCookie(response, {

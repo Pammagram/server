@@ -16,7 +16,7 @@ export class UserEntity {
   @Column({ length: 500, nullable: true })
   username?: string;
 
-  // TODO first name last name
+  // TODO add first name last name
 
   @Column('text', {
     unique: true,
@@ -36,5 +36,3 @@ export class UserEntity {
   @ManyToMany(() => ChatEntity)
   chats: ChatEntity[];
 }
-
-export type User = UserEntity;

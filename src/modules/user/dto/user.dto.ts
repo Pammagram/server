@@ -2,7 +2,7 @@ import { ChatDto } from '@modules/chat/dto';
 import { SessionDto } from '@modules/session/dto';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { User } from '../entities';
+import { User } from '../types/user';
 
 @ObjectType()
 export class UserDto implements User {

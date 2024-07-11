@@ -1,8 +1,10 @@
 import { UserEntity } from '@modules/user/entities';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+import { Session } from '../types/session';
+
 @Entity()
-export class SessionEntity {
+export class SessionEntity implements Session {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,6 +21,10 @@ export class SessionEntity {
 
   @Column('text')
   sessionId: string;
+
+  //* empty string to support older sessions
+  @Column('text')
+  messagingToken?: string;
 
   @ManyToOne(() => UserEntity, (user) => user.sessions, {
     onDelete: 'CASCADE',

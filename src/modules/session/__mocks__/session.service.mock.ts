@@ -24,13 +24,16 @@ export class MockedSessionServiceClass
   findSessionBySessionIdOrFailAndUpdate =
     jest.fn<SessionService['findSessionBySessionIdOrFailAndUpdate']>();
 
-  updateBySessionId = jest.fn<SessionService['updateBySessionId']>();
-
   createSession = jest
     .fn<SessionService['createSession']>()
     .mockImplementation((_data) => Promise.resolve(mockedSession));
 
   findByIdOrFail = jest.fn<SessionService['findByIdOrFail']>();
+
+  findMessagingTokensByUserIds =
+    jest.fn<SessionService['findMessagingTokensByUserIds']>();
+
+  updateById = jest.fn<SessionService['updateById']>();
 }
 
 export const MockedSessionService: Provider = {

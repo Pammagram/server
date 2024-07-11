@@ -1,5 +1,6 @@
 import { Config, config, configValidationSchema } from '@config';
 import { ChatModule } from '@modules/chat/chat.module';
+import { ChatType } from '@modules/chat/constants/chat-type';
 import { DbModule } from '@modules/db/db.module';
 import { GraphqlModule } from '@modules/graphql/graphql.module';
 import { INestApplication } from '@nestjs/common';
@@ -12,7 +13,6 @@ import {
   MessageAddedOutput,
   MessageDto,
 } from '@root/modules/chat/dto';
-import { ChatType } from '@root/modules/chat/entities';
 import { pubSub } from '@root/modules/chat/resolvers/messages';
 import { SessionModule } from '@root/modules/session';
 import { mockedUser } from '@root/modules/user/__mocks__/user.entity.mock';
@@ -91,7 +91,7 @@ describe('Chat flow', () => {
       data: {
         chat: { id: 0, members: [], title: 'test', type: ChatType.GROUP },
         createdAt: new Date(),
-        id: 0,
+        id: '0',
         sender: mockedUser,
         text: 'test',
         updatedAt: new Date(),

@@ -1,14 +1,20 @@
+import { NotificationService } from '@modules/notification/notification.service';
+import { UserEntity } from '@modules/user/entities';
 import { Injectable, Logger, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { In, Repository } from 'typeorm';
 
+import { ChatType } from './constants/chat-type';
 import { ChatDto, CreateChatInput, EditChatInput, MessageDto } from './dto';
-import { ChatEntity, ChatType } from './entities';
-import { MessageEntity } from './entities/message.entity';
+import { ChatEntity } from './entities';
+import { Message, MessageEntity } from './entities/message.entity';
+import { CreateMessageParams } from './types/createMessage';
+import { SendMessageParams } from './types/sendMessage';
 
 import { UserService } from '../user/user.service';
 
+// TODO split service by purposes
 @Injectable()
 export class ChatService {
   private logger: Logger = new Logger(ChatService.name);
@@ -19,6 +25,7 @@ export class ChatService {
     @InjectRepository(MessageEntity)
     private messagesRepository: Repository<MessageEntity>,
     private readonly userService: UserService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findAll(): Promise<ChatDto[]> {
@@ -173,25 +180,50 @@ export class ChatService {
     return true;
   }
 
-  async addMessage(
-    senderId: number,
-    chatId: number,
-    text: string,
-  ): Promise<MessageDto> {
+  async createMessage(params: CreateMessageParams): Promise<Message['id']> {
+    const { chatId, id, senderId, text } = params;
+
+    await this.messagesRepository.insert({
+      id,
+      chat: {
+        id: chatId,
+      },
+      sender: {
+        id: senderId,
+      },
+      text,
+    });
+
+    return id;
+  }
+
+  async notifyChatMembers(senderId: number, chatId: number, text: string) {
+    let members = await this.findChatMembersByChatId(chatId);
+    // * sender is guaranteed to be chat member
+    const sender = members.find((member) => member.id === senderId)!;
+
+    members = members.filter((member) => member.id !== senderId);
+
+    void this.notificationService.sendNotificationsByUserIds(
+      members.map((member) => member.id),
+      {
+        body: text,
+        title: sender?.username ?? sender?.phoneNumber,
+        data: {
+          chatId,
+        },
+      },
+    );
+  }
+
+  async sendMessage(params: SendMessageParams): Promise<MessageDto> {
+    const { chatId, senderId, text } = params;
+    const messageId = await this.createMessage(params);
+
+    await this.notifyChatMembers(senderId, chatId, text);
+
     try {
-      const data = await this.messagesRepository.insert({
-        chat: {
-          id: chatId,
-        },
-        sender: {
-          id: senderId,
-        },
-        text,
-      });
-
-      const insertedId = data.identifiers[0]?.['id'] as number;
-
-      const newMessage = await this.findMessageByIdOrFail(insertedId);
+      const newMessage = await this.findMessageByIdOrFail(messageId);
 
       return newMessage;
     } catch (error) {
@@ -199,23 +231,6 @@ export class ChatService {
 
       throw error;
     }
-  }
-
-  /**
-   * @deprecated use getMessagesByChatId instead
-   */
-  async messages(chatId: number): Promise<MessageDto[]> {
-    return this.messagesRepository.find({
-      where: {
-        chat: {
-          id: chatId,
-        },
-      },
-      relations: {
-        sender: true,
-        chat: true,
-      },
-    });
   }
 
   async findMessagesByChatId(chatId: number): Promise<MessageDto[]> {
@@ -229,10 +244,15 @@ export class ChatService {
         sender: true,
         chat: true,
       },
+      order: {
+        createdAt: {
+          direction: 'desc',
+        },
+      },
     });
   }
 
-  async findMessageByIdOrFail(messageId: number): Promise<MessageDto> {
+  async findMessageByIdOrFail(messageId: string): Promise<MessageDto> {
     return this.messagesRepository.findOneOrFail({
       where: { id: messageId },
       relations: {
@@ -256,5 +276,18 @@ export class ChatService {
         },
       },
     });
+  }
+
+  async findChatMembersByChatId(chatId: number): Promise<UserEntity[]> {
+    const chats = await this.chatsRepository.find({
+      where: { id: chatId },
+      relations: {
+        members: true,
+      },
+    });
+
+    const members = chats.map((chat) => chat.members).flat();
+
+    return members;
   }
 }

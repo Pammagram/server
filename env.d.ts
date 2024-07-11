@@ -23,6 +23,14 @@ declare global {
       DATABASE_USERNAME: string;
       DATABASE_PASSWORD: string;
       DATABASE_NAME: string;
+
+      // * Firebase
+      FIREBASE_PROJECT_ID: string;
+      FIREBASE_PRIVATE_KEY: string;
+      FIREBASE_CLIENT_EMAIL: string;
+
+      // * Development
+      ENABLE_SMS: string;
     }
   }
 }

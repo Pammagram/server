@@ -10,6 +10,8 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { CookieModule } from './modules/cookie/cookie.module';
+import { FirebaseModule } from './modules/firebase/firebase.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { CookieModule } from './modules/cookie/cookie.module';
       load: [config],
       validationSchema: configValidationSchema,
       envFilePath: `.env.${process.env.NODE_ENV}`,
+      cache: true,
     }),
     DbModule.forRoot(),
     UserModule,
@@ -26,6 +29,8 @@ import { CookieModule } from './modules/cookie/cookie.module';
     SessionModule,
     ChatModule,
     CookieModule,
+    NotificationModule,
+    FirebaseModule,
   ],
   controllers: [AppController],
 })

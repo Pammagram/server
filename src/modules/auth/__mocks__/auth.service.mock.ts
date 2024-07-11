@@ -6,6 +6,8 @@ import { AuthService } from '../auth.service';
 
 export class MockedAuthServiceClass implements PublicInterface<AuthService> {
   sendSms = jest.fn<AuthService['sendSms']>();
+
+  verifySms = jest.fn<AuthService['verifySms']>();
 }
 
 export const MockedAuthService: Provider = {

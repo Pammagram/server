@@ -1,4 +1,4 @@
-import { User } from '@modules/user/entities';
+import { User } from '../types/user';
 
 export const mockedUser: User = {
   chats: [],

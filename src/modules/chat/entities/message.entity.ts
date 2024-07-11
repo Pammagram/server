@@ -1,4 +1,5 @@
-import { User, UserEntity } from '@modules/user/entities';
+import { UserEntity } from '@modules/user/entities';
+import { User } from '@modules/user/types/user';
 import {
   Column,
   CreateDateColumn,
@@ -11,15 +12,15 @@ import {
 import { ChatEntity } from './chat.entity';
 
 export type Message = {
-  id: number;
+  id: string;
   sender: User;
   text: string;
 };
 
 @Entity()
 export class MessageEntity implements Message {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => ChatEntity, {
     onDelete: 'CASCADE',
