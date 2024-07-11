@@ -1,5 +1,5 @@
 import { UserDto } from '@modules/user/dto';
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { ChatDto } from './chat.dto';
 
@@ -7,8 +7,8 @@ import { Message } from '../entities';
 
 @ObjectType()
 export class MessageDto implements Message {
-  @Field(() => Int)
-  id: number;
+  @Field(() => String)
+  id: string;
 
   @Field(() => String)
   text: string;

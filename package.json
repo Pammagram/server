@@ -59,7 +59,8 @@
     "twilio": "5.0.0-rc.1",
     "typeorm": "^0.3.19",
     "utility-types": "^3.11.0",
-    "uuid": "9.0.1"
+    "uuid": "9.0.1",
+    "@notifee/react-native": "^7.8.2"
   },
   "devDependencies": {
     "@cspell/eslint-plugin": "7.3.6",

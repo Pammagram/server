@@ -8,7 +8,9 @@ import { In, Repository } from 'typeorm';
 import { ChatType } from './constants/chat-type';
 import { ChatDto, CreateChatInput, EditChatInput, MessageDto } from './dto';
 import { ChatEntity } from './entities';
-import { MessageEntity } from './entities/message.entity';
+import { Message, MessageEntity } from './entities/message.entity';
+import { CreateMessageParams } from './types/createMessage';
+import { SendMessageParams } from './types/sendMessage';
 
 import { UserService } from '../user/user.service';
 
@@ -178,8 +180,11 @@ export class ChatService {
     return true;
   }
 
-  async createMessage(senderId: number, chatId: number, text: string) {
-    const data = await this.messagesRepository.insert({
+  async createMessage(params: CreateMessageParams): Promise<Message['id']> {
+    const { chatId, id, senderId, text } = params;
+
+    await this.messagesRepository.insert({
+      id,
       chat: {
         id: chatId,
       },
@@ -189,9 +194,7 @@ export class ChatService {
       text,
     });
 
-    const insertedId = data.identifiers[0]?.['id'] as number;
-
-    return insertedId;
+    return id;
   }
 
   async notifyChatMembers(senderId: number, chatId: number, text: string) {
@@ -201,21 +204,21 @@ export class ChatService {
 
     members = members.filter((member) => member.id !== senderId);
 
-    await this.notificationService.sendNotificationsByUserIds(
+    void this.notificationService.sendNotificationsByUserIds(
       members.map((member) => member.id),
       {
         body: text,
         title: sender?.username ?? sender?.phoneNumber,
+        data: {
+          chatId,
+        },
       },
     );
   }
 
-  async sendMessage(
-    senderId: number,
-    chatId: number,
-    text: string,
-  ): Promise<MessageDto> {
-    const messageId = await this.createMessage(senderId, chatId, text);
+  async sendMessage(params: SendMessageParams): Promise<MessageDto> {
+    const { chatId, senderId, text } = params;
+    const messageId = await this.createMessage(params);
 
     await this.notifyChatMembers(senderId, chatId, text);
 
@@ -230,23 +233,6 @@ export class ChatService {
     }
   }
 
-  /**
-   * @deprecated use getMessagesByChatId instead
-   */
-  async messages(chatId: number): Promise<MessageDto[]> {
-    return this.messagesRepository.find({
-      where: {
-        chat: {
-          id: chatId,
-        },
-      },
-      relations: {
-        sender: true,
-        chat: true,
-      },
-    });
-  }
-
   async findMessagesByChatId(chatId: number): Promise<MessageDto[]> {
     return this.messagesRepository.find({
       where: {
@@ -258,10 +244,15 @@ export class ChatService {
         sender: true,
         chat: true,
       },
+      order: {
+        createdAt: {
+          direction: 'desc',
+        },
+      },
     });
   }
 
-  async findMessageByIdOrFail(messageId: number): Promise<MessageDto> {
+  async findMessageByIdOrFail(messageId: string): Promise<MessageDto> {
     return this.messagesRepository.findOneOrFail({
       where: { id: messageId },
       relations: {

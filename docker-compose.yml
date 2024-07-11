@@ -10,6 +10,7 @@ services:
     volumes:
       - ./src:/server/src
       - ./env.d.ts:/server/env.d.ts
+      - ./node_modules:/server/node_modules
       
     command: npm run start:dev
     ports:

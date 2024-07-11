@@ -2,15 +2,14 @@ import { AuthGuard } from '@modules/auth/guards';
 import { Input } from '@modules/common/decorators';
 import { SessionId } from '@modules/session';
 import { UserService } from '@modules/user/user.service';
-import { UseGuards } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
+import { v4 as uuidv4 } from 'uuid';
 
 import { messageAddedFilter } from '../chat.filter';
 import { ChatService } from '../chat.service';
 import {
-  AddMessageInput,
-  AddMessageOutput,
   MESSAGE_ADDED,
   MessageAddedOutput,
   MessagesInput,
@@ -23,6 +22,8 @@ export const pubSub = new PubSub();
 
 @Resolver()
 export class MessageResolver {
+  private logger: Logger = new Logger(MessageResolver.name);
+
   constructor(
     private readonly chatService: ChatService,
     private readonly useService: UserService,
@@ -36,38 +37,21 @@ export class MessageResolver {
     return pubSub.asyncIterator(MESSAGE_ADDED);
   }
 
-  @Mutation(() => AddMessageOutput, {
-    deprecationReason: 'Use sendMessage instead',
-  })
-  async addMessage(
-    @Input() input: AddMessageInput,
-    @SessionId() sessionId: string,
-  ): Promise<AddMessageOutput> {
-    const { chatId, text } = input;
-
-    const user = await this.useService.findUserBySessionIdOrFail(sessionId);
-
-    const data = await this.chatService.sendMessage(user.id, chatId, text);
-
-    void pubSub.publish(MESSAGE_ADDED, {
-      [MESSAGE_ADDED]: {
-        data,
-      },
-    });
-
-    return { data };
-  }
-
   @Mutation(() => SendMessageOutput)
+  @UseGuards(AuthGuard)
   async sendMessage(
     @Input() input: SendMessageInput,
     @SessionId() sessionId: string,
   ): Promise<SendMessageOutput> {
-    const { chatId, text } = input;
+    this.logger.debug('Sending message from sessionId', sessionId);
 
     const user = await this.useService.findUserBySessionIdOrFail(sessionId);
 
-    const data = await this.chatService.sendMessage(user.id, chatId, text);
+    const data = await this.chatService.sendMessage({
+      ...input,
+      id: input.id ?? uuidv4(),
+      senderId: user.id,
+    });
 
     void pubSub.publish(MESSAGE_ADDED, {
       [MESSAGE_ADDED]: {
@@ -81,7 +65,7 @@ export class MessageResolver {
   @Query(() => MessagesOutput)
   async messages(@Input() input: MessagesInput): Promise<MessagesOutput> {
     const { chatId } = input;
-    const data = await this.chatService.messages(chatId);
+    const data = await this.chatService.findMessagesByChatId(chatId);
 
     return { data, chatId };
   }
